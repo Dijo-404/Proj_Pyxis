@@ -143,7 +143,7 @@ export default function DashboardScreen({
 
 const styles = StyleSheet.create({
   backgroundImage: { flex: 1 },
-  overlay: { flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.08)' },
+  overlay: { flex: 1, backgroundColor: 'rgba(255, 255, 255, 0)' },
   root: { flex: 1, backgroundColor: 'transparent' },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
   header: {

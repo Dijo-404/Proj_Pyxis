@@ -1,7 +1,6 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ScreenHeader from '../components/ScreenHeader';
 import {
   Card,
   ProgressBar,
@@ -14,9 +13,9 @@ import { colors, font, radius, riskBand, spacing } from '../theme';
 import { RiskCase } from '../types';
 
 function getRiskColor(risk: number): string {
-  if (risk >= 80) return '#FF0000';
-  if (risk >= 50) return '#FFA500';
-  return '#00FF00';
+  if (risk >= 80) return '#000000ff';
+  if (risk >= 50) return '#000000ff';
+  return '#000000ff';
 }
 
 export default function CustomerRiskScreen({
@@ -25,11 +24,18 @@ export default function CustomerRiskScreen({
   onOpenCase: (id: string) => void;
 }) {
   return (
-    <SafeAreaView style={styles.root} edges={['top']}>
-      <ScreenHeader title="Customer Risk" />
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}>
+    <ImageBackground
+      source={require('../../assets/risk.jpg')}
+      style={styles.backgroundImage}
+      blurRadius={6}>
+      <View style={styles.overlay}>
+        <SafeAreaView style={styles.root} edges={['top']}>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Customer Risk</Text>
+          </View>
+          <ScrollView
+            contentContainerStyle={styles.content}
+            showsVerticalScrollIndicator={false}>
         <SectionTitle>Customer risk & safer workflow</SectionTitle>
 
         {CASES.map(c => (
@@ -38,7 +44,9 @@ export default function CustomerRiskScreen({
 
         <View style={{ height: spacing.xxl }} />
       </ScrollView>
-    </SafeAreaView>
+        </SafeAreaView>
+      </View>
+    </ImageBackground>
   );
 }
 
@@ -55,7 +63,7 @@ function CustomerRiskCard({
     <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
       <Card style={styles.custCard}>
         <View style={styles.custHead}>
-          <View style={[styles.custAvatar, { backgroundColor: '#000000' }]}>
+          <View style={[styles.custAvatar, { backgroundColor: '#1A1A1A' }]}>
             <Text style={[styles.custAvatarText, { color: '#FFFFFF' }]}>
               {data.customerName.charAt(0)}
             </Text>
@@ -84,7 +92,7 @@ function CustomerRiskCard({
         {/* Safer workflow — the recommended next step */}
         <View style={styles.safer}>
           <View style={styles.saferGlyph}>
-            <Icon name="compass" set="feather" size={16} color={colors.primaryDark} />
+            <Icon name="compass" set="feather" size={16} color="white" />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.saferTitle}>Safer workflow</Text>
@@ -92,7 +100,7 @@ function CustomerRiskCard({
               {nextStep}
             </Text>
           </View>
-          <Icon name="angle-right" size={20} color={colors.textFaint} style={styles.chevron} />
+          <Icon name="angle-right" size={20} color="white" style={styles.chevron} />
         </View>
       </Card>
     </TouchableOpacity>
@@ -100,20 +108,33 @@ function CustomerRiskCard({
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#000000' },
+  backgroundImage: { flex: 1 },
+  overlay: { flex: 1, backgroundColor: 'rgba(255, 255, 255, 0)' },
+  root: { flex: 1, },
+  header: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: font.h3,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
   sectionTitle: { fontSize: font.h3, fontWeight: '700', color: '#FFFFFF' },
   custCard: {
     marginBottom: spacing.md,
-    backgroundColor: 'rgba(255, 255, 255, 0.72)',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
+    padding: spacing.lg,
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
+    borderColor: '#F0F0F0',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.18,
-    shadowRadius: 20,
-    elevation: 14,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 3,
     overflow: 'hidden',
   },
   custHead: { flexDirection: 'row', alignItems: 'center' },
@@ -134,23 +155,23 @@ const styles = StyleSheet.create({
   safer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    backgroundColor: '#F5F5F5',
     borderRadius: radius.md,
     padding: spacing.md,
     marginTop: spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderColor: '#EEEEEE',
   },
   saferGlyph: {
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+    backgroundColor: '#363636ff',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
   },
   saferTitle: { fontSize: font.tiny, color: '#000000', fontWeight: '800', letterSpacing: 0.3 },
-  saferText: { fontSize: font.small, color: '#000000', marginTop: 2, lineHeight: 18 },
-  chevron: { marginLeft: spacing.sm, color: '#000000' },
+  saferText: { fontSize: font.small, color: '#000000ff', marginTop: 2, lineHeight: 18 },
+  chevron: { marginLeft: spacing.sm, color: '#999999' },
 });
