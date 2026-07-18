@@ -3,16 +3,84 @@
   <head>
     <meta charset="utf-8">
     <title>Pyxis investigation report — {{ case_id }}</title>
-    <link rel="stylesheet" href="report_styles.css">
+    <style>{% include "report_styles.css" %}</style>
   </head>
   <body>
     <header>
       <h1>Compliance Investigation Report</h1>
       <p>Case {{ case_id }}</p>
+      <p>Generated {{ generated_at }} by {{ generated_by }}</p>
     </header>
     <main>
-      <p>This template accepts validated report data only.</p>
-      <section id="case-summary">{{ case_summary }}</section>
+      <section>
+        <h2>Case summary</h2>
+        <dl>
+          <dt>Customer</dt><dd>{{ customer_id }}</dd>
+          <dt>Risk score</dt><dd>{{ risk_score }} / 100</dd>
+          <dt>Risk level</dt><dd>{{ risk_level }}</dd>
+          <dt>Case status</dt><dd>{{ case_status }}</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Executive summary</h2>
+        <p>{{ narrative.executive_summary }}</p>
+        <h2>Risk assessment</h2>
+        <p>{{ narrative.risk_assessment }}</p>
+        <h2>Evidence analysis</h2>
+        <p>{{ narrative.evidence_analysis }}</p>
+        <h2>Reviewer decision</h2>
+        <p>{{ narrative.reviewer_decision }}</p>
+        <h2>Limitations</h2>
+        <p>{{ narrative.limitations }}</p>
+      </section>
+
+      <section>
+        <h2>Scenarios</h2>
+        <table>
+          <thead><tr><th>Name</th><th>Category</th><th>Match</th></tr></thead>
+          <tbody>
+            {% for scenario in scenarios %}
+            <tr>
+              <td>{{ scenario.name }}</td>
+              <td>{{ scenario.category }}</td>
+              <td>{{ scenario.match_score }}%</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Evidence</h2>
+        <table>
+          <thead><tr><th>ID</th><th>Status</th><th>Description</th><th>Source</th></tr></thead>
+          <tbody>
+            {% for item in evidence %}
+            <tr>
+              <td>{{ item.evidence_id }}</td>
+              <td>{{ item.status }}</td>
+              <td>{{ item.description }}</td>
+              <td>{{ item.source_reference }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Human review history</h2>
+        <ul>
+          {% for review in reviews %}
+          <li>{{ review.created_at }} — {{ review.action }}: {{ review.reason }}</li>
+          {% else %}
+          <li>No reviewer decision has been recorded.</li>
+          {% endfor %}
+        </ul>
+      </section>
     </main>
+    <footer>
+      <p>Generated locally by Pyxis. AI analysis supports—but does not replace—human review.</p>
+    </footer>
   </body>
 </html>

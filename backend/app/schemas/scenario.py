@@ -1,20 +1,26 @@
-"""Scenario generation and scoring contracts."""
+"""Strict scenario import and response contracts."""
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from backend.app.schemas.common import Identifier, LongText, ScenarioCategory, ShortText
 
-class ExpectedSignal(BaseModel):
+
+class ScenarioImport(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    signal: str
-    weight: float = Field(gt=0, le=1)
+    scenario_id: Identifier | None = None
+    name: ShortText
+    category: ScenarioCategory
+    match_score: float = Field(ge=0, le=100)
+    description: LongText | None = None
 
 
-class Scenario(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class ScenarioRead(BaseModel):
+    model_config = ConfigDict(extra="forbid", from_attributes=True)
 
-    scenario_id: str
-    category: str
+    scenario_id: Identifier
+    case_id: Identifier
     name: str
-    description: str
-    expected_signals: list[ExpectedSignal]
+    category: ScenarioCategory
+    match_score: float
+    description: str | None

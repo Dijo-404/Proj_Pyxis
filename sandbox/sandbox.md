@@ -59,6 +59,16 @@ Report Writer and deterministic renderer
 - [llama.cpp provider](../intelligence/gemma/providers/llamacpp_provider.py)
 - [LiteRT-LM provider](../intelligence/gemma/providers/litert_provider.py)
 
+## Member 2 case-assistant files
+
+- [Private local Gemma HTTP client](../local_ai/gemma/client.py)
+- [Case assistant](../local_ai/gemma/case_assistant.py)
+- [Case-only context builder](../local_ai/gemma/context_builder.py)
+- [Evidence critic](../local_ai/gemma/evidence_critic.py)
+- [Report writer](../local_ai/gemma/report_writer.py)
+- [Structured-output parser](../local_ai/gemma/output_parser.py)
+- [Synthetic risk-case input](mock_risk_case.json)
+
 ## Agent prompt files
 
 - [Investigation system prompt](../intelligence/prompts/investigation_system.txt)
@@ -110,9 +120,21 @@ Report Writer and deterministic renderer
 - [Local retriever](../intelligence/retrieval/local_retriever.py)
 - [FAISS store](../intelligence/retrieval/faiss_store.py)
 
+## Member 2 document tools
+
+- [Local parser](../document_processing/parser.py)
+- [Deterministic field extractor](../document_processing/extractor.py)
+- [Local OCR fallback](../document_processing/ocr.py)
+- [Source-addressable indexer](../document_processing/indexer.py)
+
 ## Backend integration files
 
 - [Case service](../backend/app/services/case_service.py)
+- [Case-assistant service](../backend/app/services/assistant_service.py)
+- [Evidence service](../backend/app/services/evidence_service.py)
+- [Document service](../backend/app/services/document_service.py)
+- [Review service](../backend/app/services/review_service.py)
+- [Audit service](../backend/app/services/audit_service.py)
 - [Report service](../backend/app/services/report_service.py)
 - [Risk-case schema](../backend/app/schemas/case.py)
 - [Scenario schema](../backend/app/schemas/scenario.py)
@@ -137,7 +159,7 @@ Report Writer and deterministic renderer
 
 ## Current readiness
 
-The provider adapters and most domain-agent modules are currently architectural
-placeholders. The match scorer, trust gate, schemas, API shell, report template, and
-tests provide the initial executable boundaries. `scripts/run_demo.py` must be
-implemented before this becomes an end-to-end runnable simulation.
+The Member 2 case-management, local assistant, document, audit, review, and report
+flows are implemented and independently testable with the synthetic risk-case input.
+Member 1's financial-intelligence provider adapters and most intelligence modules are
+still architectural placeholders.

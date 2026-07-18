@@ -1,8 +1,4 @@
-"""SQLAlchemy persistence models.
-
-Concrete mappings are added alongside the first database migration so model and
-schema evolution stay synchronized.
-"""
+"""Shared SQLAlchemy declarative base for Pyxis persistence models."""
 
 from sqlalchemy.orm import DeclarativeBase
 

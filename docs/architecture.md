@@ -118,7 +118,7 @@ The Flutter mobile app communicates with the local backend over the same secure 
 
 ```text
 Laptop / Local Server
-├── PostgreSQL
+├── SQLite Database File
 ├── FastAPI Backend
 ├── Gemma Runtime
 ├── Adaptive Twin Engine
@@ -978,7 +978,7 @@ Advantages:
 - model is loaded once,
 - mobile device does not require high RAM,
 - banking data remains inside the local machine/network,
-- easier to integrate PostgreSQL and analytics,
+- easier to integrate SQLite and local analytics,
 - easier to demo.
 
 ## Option B — On-Device Mobile Gemma
@@ -1056,11 +1056,10 @@ This prevents the entire application from depending on one inference runtime.
 
 | Data | Technology |
 |---|---|
-| Primary Relational Data | PostgreSQL |
-| Hackathon Lightweight Option | SQLite |
+| Primary Relational Data | SQLite |
 | Vector Search | FAISS locally |
-| Document Metadata | PostgreSQL |
-| Audit Logs | PostgreSQL append-only tables |
+| Document Metadata | SQLite |
+| Audit Logs | SQLite append-only tables |
 
 A separate cloud vector database is not required.
 
@@ -1092,8 +1091,6 @@ A separate cloud vector database is not required.
 ```text
 Git
 GitHub
-Docker
-Docker Compose
 Postman
 VS Code
 ```
@@ -1109,7 +1106,6 @@ pyxis/
 ├── LICENSE
 ├── .gitignore
 ├── .env.example
-├── docker-compose.yml
 ├── pyproject.toml
 ├── requirements.txt
 │
@@ -2092,7 +2088,7 @@ Flutter Mobile App
         v
 FastAPI Backend
         |
-        +--> PostgreSQL
+        +--> SQLite
         |
         +--> Financial Twin Engine
         |

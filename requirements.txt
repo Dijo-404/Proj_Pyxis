@@ -1,1 +1,1 @@
--e .[analytics,reports,dev]
+-e .[analytics,documents,reports,dev]

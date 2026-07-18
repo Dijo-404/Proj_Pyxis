@@ -5,9 +5,44 @@
 
 body {
   margin: 2.5rem;
+  line-height: 1.5;
 }
 
 header {
   border-bottom: 2px solid #334e68;
   margin-bottom: 2rem;
+}
+
+h2 {
+  color: #174a5b;
+  margin-top: 1.75rem;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+}
+
+dt {
+  font-weight: 700;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid #bcccdc;
+  padding: 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+footer {
+  border-top: 1px solid #829ab1;
+  font-size: 0.85rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
 }

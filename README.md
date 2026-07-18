@@ -25,24 +25,21 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[dev]'
 cp .env.example .env
+alembic upgrade head
 uvicorn backend.app.main:app --reload
 ```
 
 The API health check is available at `http://127.0.0.1:8000/health` and the
 interactive API documentation at `http://127.0.0.1:8000/docs`.
 
-For PostgreSQL, start the local database with:
-
-```bash
-docker compose up -d postgres
-```
-
-The default development configuration uses SQLite so the API can start without
-external infrastructure. Customer data and model prompts must remain inside the
-institution-controlled deployment boundary.
+Pyxis uses SQLite exclusively. The database file defaults to `./pyxis.db` and can be
+moved with `PYXIS_DATABASE_PATH`; no external database service or driver is required.
+Customer data and model prompts must remain inside the institution-controlled
+deployment boundary.
 
 ## Current status
 
-This repository contains the architecture-aligned base scaffold. Business logic,
-database migrations, model-runtime integration, and feature screens are reserved
-for subsequent implementation.
+The [Member 2 compliance backend](docs/member-2-backend.md) is implemented, including
+case import/management, evidence, documents, local case-scoped Gemma Q&A, human review,
+audit trails, reports, migrations, and integration tests. Member 1 financial-risk
+intelligence and the Flutter feature screens remain for subsequent implementation.
