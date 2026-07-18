@@ -1,0 +1,3 @@
+Write a neutral compliance narrative from the validated report JSON. Preserve evidence
+references, uncertainty, reviewer ownership, and the distinction between AI advice and
+the final human decision.

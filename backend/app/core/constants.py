@@ -1,0 +1,5 @@
+"""Stable application constants."""
+
+API_V1_PREFIX = "/api/v1"
+SUPPORTED_SCENARIO_CATEGORIES = frozenset({"LEGITIMATE", "SUSPICIOUS", "UNCERTAIN"})
+SUPPORTED_EVIDENCE_STATES = frozenset({"MATCH", "PARTIAL", "UNKNOWN", "CONTRADICT"})

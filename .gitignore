@@ -1,0 +1,44 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+dist/
+build/
+htmlcov/
+.coverage
+
+# Local data and model artifacts
+*.db
+*.sqlite
+*.sqlite3
+models/*
+!models/README.md
+!models/.gitkeep
+data/
+reports/
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+mobile_app/build/
+mobile_app/.metadata
+mobile_app/android/.gradle/
+mobile_app/ios/Pods/
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.swp
+.DS_Store
