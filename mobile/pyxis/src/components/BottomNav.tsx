@@ -33,10 +33,11 @@ export default function BottomNav({
         tension: 40,
       }).start();
     });
-  }, [active, scaleAnims]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
 
   return (
-    <View style={styles.wrapper}>
+    <View style={styles.wrapper} pointerEvents="box-none">
       <View style={styles.nav}>
         {items.map(item => {
           const isActive = active === item.key;
@@ -48,7 +49,7 @@ export default function BottomNav({
           return (
             <TouchableOpacity
               key={item.key}
-              style={[styles.navItem]}
+              style={styles.navItem}
               activeOpacity={0.8}
               onPress={() => onPress(item.key)}>
               <Animated.View
@@ -62,8 +63,8 @@ export default function BottomNav({
                 <Icon
                   name={item.icon}
                   set="feather"
-                  size={24}
-                  color={isActive ? 'white' : '#999'}
+                  size={22}
+                  color={isActive ? 'white' : '#9A9A9A'}
                 />
               </Animated.View>
             </TouchableOpacity>
@@ -76,46 +77,44 @@ export default function BottomNav({
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.md,
-    paddingTop: spacing.sm,
-    backgroundColor: 'transparent',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: spacing.lg,
+    alignItems: 'center',
   },
   nav: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    backdropFilter: 'blur(20px)',
-    borderRadius: 28,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    height: 70,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.72)',
+    borderRadius: 38,
+    paddingHorizontal: spacing.sm,
+    height: 68,
+    gap: spacing.sm,
     borderWidth: 1.5,
-    borderColor: 'rgba(0, 0, 0, 0.08)',
+    borderColor: 'rgba(255, 255, 255, 0.6)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    elevation: 12,
-    transform: [{ translateY: -2 }],
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.18,
+    shadowRadius: 20,
+    elevation: 14,
   },
   navItem: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.xs,
   },
-  navItemActive: {},
   navIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: '#999',
+    borderWidth: 1.5,
+    borderColor: 'rgba(2, 0, 0, 0.27)',
   },
   navIconActive: {
     backgroundColor: '#000',

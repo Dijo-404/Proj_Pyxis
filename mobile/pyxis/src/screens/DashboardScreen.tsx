@@ -28,16 +28,19 @@ export default function DashboardScreen({
   );
 
   return (
-    <SafeAreaView style={styles.root} edges={['top']}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}>
+    <ImageBackground
+      source={require('../../assets/dash.jpg')}
+      style={styles.backgroundImage}
+      blurRadius={6}>
+      <View style={styles.overlay}>
+        <SafeAreaView style={styles.root} edges={['top']}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
-              {user?.name.charAt(0) ?? 'P'}
-            </Text>
+            <Icon name="user" set="feather" size={24} color="white" />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.welcome}>Welcome back</Text>
@@ -132,12 +135,16 @@ export default function DashboardScreen({
 
         <View style={{ height: spacing.xxl }} />
       </ScrollView>
-    </SafeAreaView>
+        </SafeAreaView>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  backgroundImage: { flex: 1 },
+  overlay: { flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.08)' },
+  root: { flex: 1, backgroundColor: 'transparent' },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
   header: {
     flexDirection: 'row',
@@ -145,15 +152,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    backgroundColor: colors.primary,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
   },
-  avatarText: { color: colors.onPrimary, fontSize: font.h3, fontWeight: '800' },
   welcome: { color: colors.textMuted, fontSize: font.small },
   userName: { color: colors.text, fontSize: font.h3, fontWeight: '800' },
   logout: {

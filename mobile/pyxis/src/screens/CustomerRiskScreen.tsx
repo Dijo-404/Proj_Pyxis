@@ -13,6 +13,12 @@ import { CASES } from '../mockData';
 import { colors, font, radius, riskBand, spacing } from '../theme';
 import { RiskCase } from '../types';
 
+function getRiskColor(risk: number): string {
+  if (risk >= 80) return '#FF0000';
+  if (risk >= 50) return '#FFA500';
+  return '#00FF00';
+}
+
 export default function CustomerRiskScreen({
   onOpenCase,
 }: {
@@ -49,8 +55,8 @@ function CustomerRiskCard({
     <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
       <Card style={styles.custCard}>
         <View style={styles.custHead}>
-          <View style={[styles.custAvatar, { backgroundColor: band.soft }]}>
-            <Text style={[styles.custAvatarText, { color: band.color }]}>
+          <View style={[styles.custAvatar, { backgroundColor: '#000000' }]}>
+            <Text style={[styles.custAvatarText, { color: '#FFFFFF' }]}>
               {data.customerName.charAt(0)}
             </Text>
           </View>
@@ -68,9 +74,9 @@ function CustomerRiskCard({
         <View style={styles.riskLine}>
           <Text style={styles.riskLineLabel}>Risk score</Text>
           <View style={{ flex: 1, marginHorizontal: spacing.md }}>
-            <ProgressBar value={data.currentRisk} color={band.color} />
+            <ProgressBar value={data.currentRisk} color={getRiskColor(data.currentRisk)} />
           </View>
-          <Text style={[styles.riskLineValue, { color: band.color }]}>
+          <Text style={[styles.riskLineValue, { color: getRiskColor(data.currentRisk) }]}>
             {data.currentRisk}
           </Text>
         </View>
@@ -94,10 +100,22 @@ function CustomerRiskCard({
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root: { flex: 1, backgroundColor: '#000000' },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
-  sectionTitle: { fontSize: font.h3, fontWeight: '700', color: colors.text },
-  custCard: { marginBottom: spacing.md },
+  sectionTitle: { fontSize: font.h3, fontWeight: '700', color: '#FFFFFF' },
+  custCard: {
+    marginBottom: spacing.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.72)',
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.18,
+    shadowRadius: 20,
+    elevation: 14,
+    overflow: 'hidden',
+  },
   custHead: { flexDirection: 'row', alignItems: 'center' },
   custAvatar: {
     width: 42,
@@ -108,29 +126,31 @@ const styles = StyleSheet.create({
     marginRight: spacing.md,
   },
   custAvatarText: { fontSize: font.h3, fontWeight: '800' },
-  custName: { fontSize: font.body, fontWeight: '700', color: colors.text },
-  custMeta: { fontSize: font.small, color: colors.textMuted, marginTop: 1 },
+  custName: { fontSize: font.body, fontWeight: '700', color: '#000000' },
+  custMeta: { fontSize: font.small, color: '#666666', marginTop: 1 },
   riskLine: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.lg },
-  riskLineLabel: { fontSize: font.tiny, color: colors.textFaint, width: 58 },
+  riskLineLabel: { fontSize: font.tiny, color: '#666666', width: 58 },
   riskLineValue: { fontSize: font.body, fontWeight: '800', width: 30, textAlign: 'right' },
   safer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surfaceAlt,
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     borderRadius: radius.md,
     padding: spacing.md,
     marginTop: spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
   },
   saferGlyph: {
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: colors.primarySoft,
+    backgroundColor: 'rgba(0, 0, 0, 0.08)',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
   },
-  saferTitle: { fontSize: font.tiny, color: colors.primaryDark, fontWeight: '800', letterSpacing: 0.3 },
-  saferText: { fontSize: font.small, color: colors.text, marginTop: 2, lineHeight: 18 },
-  chevron: { marginLeft: spacing.sm },
+  saferTitle: { fontSize: font.tiny, color: '#000000', fontWeight: '800', letterSpacing: 0.3 },
+  saferText: { fontSize: font.small, color: '#000000', marginTop: 2, lineHeight: 18 },
+  chevron: { marginLeft: spacing.sm, color: '#000000' },
 });
