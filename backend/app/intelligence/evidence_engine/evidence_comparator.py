@@ -1,4 +1,4 @@
-from app.schemas.evidence import EvidenceComparison
+from backend.app.schemas.evidence import EvidenceComparison
 
 
 def rank_comparisons(comparisons: list[EvidenceComparison]) -> list[EvidenceComparison]:

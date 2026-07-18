@@ -1,2 +1,2 @@
-from app.schemas.financial_twin import FinancialTwin
+from backend.app.schemas.financial_twin import FinancialTwin
 

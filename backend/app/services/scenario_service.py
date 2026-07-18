@@ -1,10 +1,10 @@
-from app.intelligence.evidence_engine.critical_evidence import find_decision_critical_evidence
-from app.intelligence.evidence_engine.evidence_comparator import rank_comparisons
-from app.intelligence.scenario_engine.simulator import simulate_scenario
-from app.schemas.anomaly import AnomalyAssessment
-from app.schemas.evidence import DecisionCriticalEvidence, EvidenceComparison
-from app.schemas.scenario import Scenario
-from app.schemas.transaction import TransactionInput
+from backend.app.intelligence.evidence_engine.critical_evidence import find_decision_critical_evidence
+from backend.app.intelligence.evidence_engine.evidence_comparator import rank_comparisons
+from backend.app.intelligence.scenario_engine.simulator import simulate_scenario
+from backend.app.schemas.anomaly import AnomalyAssessment
+from backend.app.schemas.evidence import DecisionCriticalEvidence, EvidenceComparison
+from backend.app.schemas.scenario import Scenario
+from backend.app.schemas.transaction import TransactionInput
 
 
 class ScenarioService:

@@ -1,9 +1,9 @@
-from app.intelligence.gemma.output_parser import parse_investigation_output
-from app.intelligence.gemma.provider import GemmaProvider, LocalFallbackGemmaProvider
-from app.schemas.anomaly import AnomalyAssessment
-from app.schemas.financial_twin import FinancialTwin
-from app.schemas.scenario import GemmaInvestigation
-from app.schemas.transaction import TransactionInput
+from backend.app.intelligence.gemma.output_parser import parse_investigation_output
+from backend.app.intelligence.gemma.provider import GemmaProvider, LocalFallbackGemmaProvider
+from backend.app.schemas.anomaly import AnomalyAssessment
+from backend.app.schemas.financial_twin import FinancialTwin
+from backend.app.schemas.scenario import GemmaInvestigation
+from backend.app.schemas.transaction import TransactionInput
 
 
 class InvestigationService:

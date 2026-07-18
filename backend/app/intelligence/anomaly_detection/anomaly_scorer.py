@@ -1,8 +1,8 @@
-from app.intelligence.anomaly_detection.rule_engine import evaluate_rules
-from app.intelligence.anomaly_detection.statistical_detector import calculate_features
-from app.schemas.anomaly import AnomalyAssessment
-from app.schemas.financial_twin import FinancialTwin
-from app.schemas.transaction import TransactionInput
+from backend.app.intelligence.anomaly_detection.rule_engine import evaluate_rules
+from backend.app.intelligence.anomaly_detection.statistical_detector import calculate_features
+from backend.app.schemas.anomaly import AnomalyAssessment
+from backend.app.schemas.financial_twin import FinancialTwin
+from backend.app.schemas.transaction import TransactionInput
 
 
 RULE_WEIGHTS = {

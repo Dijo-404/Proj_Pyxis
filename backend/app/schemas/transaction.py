@@ -25,7 +25,7 @@ class TransactionEvaluateRequest(BaseModel):
     customer_profile: "CustomerProfile"
 
 
-from app.schemas.customer import CustomerProfile
+from backend.app.schemas.customer import CustomerProfile
 
 TransactionEvaluateRequest.model_rebuild()
 

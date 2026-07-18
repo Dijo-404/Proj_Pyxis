@@ -1,0 +1,13 @@
+:root {
+  color: #18202a;
+  font-family: sans-serif;
+}
+
+body {
+  margin: 2.5rem;
+}
+
+header {
+  border-bottom: 2px solid #334e68;
+  margin-bottom: 2rem;
+}

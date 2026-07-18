@@ -1,9 +1,9 @@
-from app.intelligence.scenario_engine.match_scorer import calculate_match_score
-from app.intelligence.scenario_engine.signal_evaluator import evaluate_signal
-from app.schemas.anomaly import AnomalyAssessment
-from app.schemas.evidence import EvidenceComparison
-from app.schemas.scenario import Scenario
-from app.schemas.transaction import TransactionInput
+from backend.app.intelligence.scenario_engine.match_scorer import calculate_match_score
+from backend.app.intelligence.scenario_engine.signal_evaluator import evaluate_signal
+from backend.app.schemas.anomaly import AnomalyAssessment
+from backend.app.schemas.evidence import EvidenceComparison
+from backend.app.schemas.scenario import Scenario
+from backend.app.schemas.transaction import TransactionInput
 
 
 def simulate_scenario(scenario: Scenario, transaction: TransactionInput, anomaly: AnomalyAssessment) -> EvidenceComparison:

@@ -1,6 +1,6 @@
 import pytest
 
-from app.intelligence.gemma.output_parser import parse_investigation_output
+from backend.app.intelligence.gemma.output_parser import parse_investigation_output
 
 
 def test_parse_investigation_output_validates_scenarios():

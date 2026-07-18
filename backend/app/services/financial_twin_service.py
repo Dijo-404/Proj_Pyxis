@@ -1,7 +1,7 @@
-from app.intelligence.financial_twin.twin_builder import build_financial_twin
-from app.repositories.twin_repository import TwinRepository
-from app.schemas.customer import CustomerProfile
-from app.schemas.financial_twin import BehaviorProfile, FinancialTwin
+from backend.app.intelligence.financial_twin.twin_builder import build_financial_twin
+from backend.app.repositories.twin_repository import TwinRepository
+from backend.app.schemas.customer import CustomerProfile
+from backend.app.schemas.financial_twin import BehaviorProfile, FinancialTwin
 
 
 class FinancialTwinService:

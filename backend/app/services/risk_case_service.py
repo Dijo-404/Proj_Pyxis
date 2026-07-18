@@ -1,18 +1,18 @@
 from datetime import datetime, timezone
 
-from app.repositories.case_repository import CaseRepository
-from app.repositories.customer_repository import CustomerRepository
-from app.repositories.transaction_repository import TransactionRepository
-from app.repositories.twin_repository import TwinRepository
-from app.schemas.customer import CustomerProfile
-from app.schemas.financial_twin import FinancialTwin
-from app.schemas.risk_case import RiskCaseResponse
-from app.schemas.transaction import TransactionEvaluateRequest, TransactionInput
-from app.services.anomaly_service import AnomalyService
-from app.services.customer_profile_service import CustomerProfileService
-from app.services.financial_twin_service import FinancialTwinService
-from app.services.investigation_service import InvestigationService
-from app.services.scenario_service import ScenarioService
+from backend.app.repositories.case_repository import CaseRepository
+from backend.app.repositories.customer_repository import CustomerRepository
+from backend.app.repositories.transaction_repository import TransactionRepository
+from backend.app.repositories.twin_repository import TwinRepository
+from backend.app.schemas.customer import CustomerProfile
+from backend.app.schemas.financial_twin import FinancialTwin
+from backend.app.schemas.risk_case import RiskCaseResponse
+from backend.app.schemas.transaction import TransactionEvaluateRequest, TransactionInput
+from backend.app.services.anomaly_service import AnomalyService
+from backend.app.services.customer_profile_service import CustomerProfileService
+from backend.app.services.financial_twin_service import FinancialTwinService
+from backend.app.services.investigation_service import InvestigationService
+from backend.app.services.scenario_service import ScenarioService
 
 
 class RiskCaseService:

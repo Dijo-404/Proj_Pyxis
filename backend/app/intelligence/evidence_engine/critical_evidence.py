@@ -1,4 +1,4 @@
-from app.schemas.evidence import DecisionCriticalEvidence, EvidenceComparison
+from backend.app.schemas.evidence import DecisionCriticalEvidence, EvidenceComparison
 
 
 def find_decision_critical_evidence(comparisons: list[EvidenceComparison]) -> DecisionCriticalEvidence:

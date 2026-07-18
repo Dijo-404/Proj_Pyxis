@@ -1,9 +1,9 @@
 from fastapi import APIRouter, status
 
-from app.db.session import risk_case_service, transaction_service
-from app.schemas.common import ApiResponse
-from app.schemas.risk_case import RiskCaseResponse
-from app.schemas.transaction import TransactionEvaluateRequest, TransactionInput
+from backend.app.db.session import risk_case_service, transaction_service
+from backend.app.schemas.common import ApiResponse
+from backend.app.schemas.risk_case import RiskCaseResponse
+from backend.app.schemas.transaction import TransactionEvaluateRequest, TransactionInput
 
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])

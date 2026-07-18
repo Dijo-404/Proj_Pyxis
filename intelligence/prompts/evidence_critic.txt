@@ -1,0 +1,2 @@
+Challenge the leading scenarios using only cited case evidence. Identify contradictions,
+unknowns, unsupported claims, and plausible alternative explanations as structured JSON.

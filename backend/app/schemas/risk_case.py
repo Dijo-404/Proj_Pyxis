@@ -2,10 +2,10 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel, Field
 
-from app.schemas.anomaly import AnomalyAssessment, TriggeredRule
-from app.schemas.evidence import DecisionCriticalEvidence, EvidenceComparison
-from app.schemas.financial_twin import FinancialTwin
-from app.schemas.scenario import GemmaInvestigation, Scenario
+from backend.app.schemas.anomaly import AnomalyAssessment, TriggeredRule
+from backend.app.schemas.evidence import DecisionCriticalEvidence, EvidenceComparison
+from backend.app.schemas.financial_twin import FinancialTwin
+from backend.app.schemas.scenario import GemmaInvestigation, Scenario
 
 
 class RiskCaseResponse(BaseModel):

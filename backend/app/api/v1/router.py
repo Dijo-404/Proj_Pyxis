@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.routes import cases, customers, transactions
+from backend.app.api.v1.routes import cases, customers, transactions
 
 
 api_router = APIRouter()

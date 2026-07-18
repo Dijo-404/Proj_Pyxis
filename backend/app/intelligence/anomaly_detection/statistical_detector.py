@@ -1,5 +1,5 @@
-from app.schemas.financial_twin import FinancialTwin
-from app.schemas.transaction import TransactionInput
+from backend.app.schemas.financial_twin import FinancialTwin
+from backend.app.schemas.transaction import TransactionInput
 
 
 def calculate_features(transaction: TransactionInput, twin: FinancialTwin, hourly_velocity: int = 1) -> dict[str, float | int | bool | str | None]:

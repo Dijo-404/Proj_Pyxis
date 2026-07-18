@@ -1,4 +1,4 @@
-from app.schemas.risk_case import RiskCaseResponse
+from backend.app.schemas.risk_case import RiskCaseResponse
 
 
 def test_risk_case_contract_requires_core_case_fields():

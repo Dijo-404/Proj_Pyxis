@@ -1,5 +1,5 @@
-from app.intelligence.evidence_engine.critical_evidence import find_decision_critical_evidence
-from app.schemas.evidence import EvidenceComparison, SignalEvaluation
+from backend.app.intelligence.evidence_engine.critical_evidence import find_decision_critical_evidence
+from backend.app.schemas.evidence import EvidenceComparison, SignalEvaluation
 
 
 def test_find_decision_critical_evidence_prioritizes_unknown_high_weight_signal():

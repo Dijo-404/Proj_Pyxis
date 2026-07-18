@@ -1,7 +1,7 @@
-from app.schemas.anomaly import AnomalyAssessment
-from app.schemas.evidence import SignalEvaluation
-from app.schemas.scenario import ExpectedSignal
-from app.schemas.transaction import TransactionInput
+from backend.app.schemas.anomaly import AnomalyAssessment
+from backend.app.schemas.evidence import SignalEvaluation
+from backend.app.schemas.scenario import ExpectedSignal
+from backend.app.schemas.transaction import TransactionInput
 
 
 def evaluate_signal(signal: ExpectedSignal, transaction: TransactionInput, anomaly: AnomalyAssessment) -> SignalEvaluation:

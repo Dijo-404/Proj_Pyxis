@@ -1,6 +1,6 @@
-from app.intelligence.financial_twin.behavior_features import build_behavior_profile
-from app.repositories.transaction_repository import TransactionRepository
-from app.schemas.financial_twin import BehaviorProfile
+from backend.app.intelligence.financial_twin.behavior_features import build_behavior_profile
+from backend.app.repositories.transaction_repository import TransactionRepository
+from backend.app.schemas.financial_twin import BehaviorProfile
 
 
 class CustomerProfileService:

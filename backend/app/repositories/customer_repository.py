@@ -1,4 +1,4 @@
-from app.schemas.customer import CustomerProfile
+from backend.app.schemas.customer import CustomerProfile
 
 
 class CustomerRepository:

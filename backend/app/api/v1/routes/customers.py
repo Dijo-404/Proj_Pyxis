@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 
-from app.core.errors import not_found
-from app.db.session import risk_case_service
-from app.schemas.common import ApiResponse
-from app.schemas.customer import CustomerProfile
-from app.schemas.financial_twin import FinancialTwin
+from backend.app.core.errors import not_found
+from backend.app.db.session import risk_case_service
+from backend.app.schemas.common import ApiResponse
+from backend.app.schemas.customer import CustomerProfile
+from backend.app.schemas.financial_twin import FinancialTwin
 
 
 router = APIRouter(prefix="/customers", tags=["customers"])

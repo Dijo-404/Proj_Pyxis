@@ -1,5 +1,5 @@
-from app.intelligence.scenario_engine.match_scorer import calculate_match_score
-from app.schemas.evidence import SignalEvaluation
+from backend.app.intelligence.scenario_engine.match_scorer import calculate_match_score
+from backend.app.schemas.evidence import SignalEvaluation
 
 
 def test_calculate_match_score_handles_partial_and_unknown_evidence():

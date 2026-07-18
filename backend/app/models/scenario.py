@@ -1,2 +1,2 @@
-from app.schemas.scenario import Scenario
+from backend.app.schemas.scenario import Scenario
 

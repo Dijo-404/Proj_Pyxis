@@ -1,0 +1,2 @@
+Identify evidence that best separates the leading scenarios. Describe potential score
+changes as scenario-based estimates, never as guaranteed predictions.

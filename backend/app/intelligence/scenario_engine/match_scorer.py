@@ -1,4 +1,4 @@
-from app.schemas.evidence import SignalEvaluation
+from backend.app.schemas.evidence import SignalEvaluation
 
 
 STATUS_MULTIPLIERS = {

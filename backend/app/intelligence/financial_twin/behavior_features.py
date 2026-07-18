@@ -1,7 +1,7 @@
 from collections import Counter, defaultdict
 from statistics import median
 
-from app.schemas.financial_twin import (
+from backend.app.schemas.financial_twin import (
     AmountProfile,
     BehaviorProfile,
     BeneficiaryProfile,
@@ -9,7 +9,7 @@ from app.schemas.financial_twin import (
     TimeProfile,
     VelocityProfile,
 )
-from app.schemas.transaction import TransactionInput
+from backend.app.schemas.transaction import TransactionInput
 
 
 def percentile(values: list[float], pct: float) -> float:

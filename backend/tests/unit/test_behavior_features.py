@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from app.intelligence.financial_twin.behavior_features import build_behavior_profile
-from app.schemas.transaction import TransactionInput
+from backend.app.intelligence.financial_twin.behavior_features import build_behavior_profile
+from backend.app.schemas.transaction import TransactionInput
 
 
 def test_build_behavior_profile_summarizes_trusted_history():

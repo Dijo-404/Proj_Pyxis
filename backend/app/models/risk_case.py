@@ -1,2 +1,2 @@
-from app.schemas.risk_case import RiskCaseResponse
+from backend.app.schemas.risk_case import RiskCaseResponse
 

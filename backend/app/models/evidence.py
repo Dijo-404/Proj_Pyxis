@@ -1,2 +1,2 @@
-from app.schemas.evidence import EvidenceComparison
+from backend.app.schemas.evidence import EvidenceComparison
 

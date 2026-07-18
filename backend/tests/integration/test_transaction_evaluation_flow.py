@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from app.main import app
+from backend.app.main import app
 
 
 def test_transaction_evaluation_creates_risk_case_json():

@@ -1,4 +1,4 @@
-from app.schemas.transaction import TransactionInput
+from backend.app.schemas.transaction import TransactionInput
 
 
 class TransactionRepository:

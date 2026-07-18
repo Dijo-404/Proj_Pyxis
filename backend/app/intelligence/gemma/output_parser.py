@@ -2,7 +2,7 @@ import json
 
 from pydantic import ValidationError
 
-from app.schemas.scenario import GemmaInvestigation
+from backend.app.schemas.scenario import GemmaInvestigation
 
 
 def parse_investigation_output(raw_output: str) -> GemmaInvestigation:

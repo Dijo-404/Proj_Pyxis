@@ -1,16 +1,18 @@
 from fastapi import FastAPI
 
-from app.api.v1.router import api_router
-from app.core.config import settings
+from backend.app.api.v1.router import api_router
+from backend.app.core.config import settings
 
 
-app = FastAPI(title=settings.app_name)
+def create_app() -> FastAPI:
+    application = FastAPI(title=settings.app_name, version=settings.app_version)
+
+    @application.get("/health", tags=["system"])
+    def health() -> dict[str, str]:
+        return {"status": "ok", "service": settings.app_name}
+
+    application.include_router(api_router, prefix=settings.api_v1_prefix)
+    return application
 
 
-@app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
-
-
-app.include_router(api_router, prefix=settings.api_prefix)
-
+app = create_app()

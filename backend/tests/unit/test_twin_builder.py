@@ -1,7 +1,7 @@
-from app.intelligence.financial_twin.trust_gate import should_learn_transaction
-from app.intelligence.financial_twin.twin_builder import build_financial_twin
-from app.schemas.customer import CustomerProfile
-from app.schemas.financial_twin import BehaviorProfile
+from backend.app.intelligence.financial_twin.trust_gate import should_learn_transaction
+from backend.app.intelligence.financial_twin.twin_builder import build_financial_twin
+from backend.app.schemas.customer import CustomerProfile
+from backend.app.schemas.financial_twin import BehaviorProfile
 
 
 def test_build_financial_twin_merges_behavior_and_business_profile():

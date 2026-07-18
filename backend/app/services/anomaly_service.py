@@ -1,7 +1,7 @@
-from app.intelligence.anomaly_detection.anomaly_scorer import score_transaction
-from app.schemas.anomaly import AnomalyAssessment
-from app.schemas.financial_twin import FinancialTwin
-from app.schemas.transaction import TransactionInput
+from backend.app.intelligence.anomaly_detection.anomaly_scorer import score_transaction
+from backend.app.schemas.anomaly import AnomalyAssessment
+from backend.app.schemas.financial_twin import FinancialTwin
+from backend.app.schemas.transaction import TransactionInput
 
 
 class AnomalyService:

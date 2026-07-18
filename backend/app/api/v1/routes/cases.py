@@ -1,11 +1,11 @@
 from fastapi import APIRouter
 
-from app.core.errors import not_found
-from app.db.session import risk_case_service
-from app.schemas.common import ApiResponse
-from app.schemas.evidence import EvidenceComparison
-from app.schemas.risk_case import RiskCaseResponse
-from app.schemas.scenario import Scenario
+from backend.app.core.errors import not_found
+from backend.app.db.session import risk_case_service
+from backend.app.schemas.common import ApiResponse
+from backend.app.schemas.evidence import EvidenceComparison
+from backend.app.schemas.risk_case import RiskCaseResponse
+from backend.app.schemas.scenario import Scenario
 
 
 router = APIRouter(prefix="/cases", tags=["cases"])

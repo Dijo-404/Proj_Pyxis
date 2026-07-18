@@ -1,5 +1,5 @@
-from app.schemas.customer import CustomerProfile
-from app.schemas.financial_twin import BehaviorProfile, BusinessProfile, FinancialTwin
+from backend.app.schemas.customer import CustomerProfile
+from backend.app.schemas.financial_twin import BehaviorProfile, BusinessProfile, FinancialTwin
 
 
 def build_financial_twin(customer: CustomerProfile, behavior: BehaviorProfile, version: int = 1) -> FinancialTwin:

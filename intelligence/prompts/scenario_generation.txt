@@ -1,0 +1,2 @@
+Generate plausible LEGITIMATE, SUSPICIOUS, and UNCERTAIN scenarios. For each scenario,
+list transparent expected signals and weights. Do not invent evidence or numerical facts.

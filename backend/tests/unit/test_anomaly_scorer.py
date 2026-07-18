@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from app.intelligence.anomaly_detection.anomaly_scorer import score_transaction
-from app.schemas.financial_twin import FinancialTwin
-from app.schemas.transaction import TransactionInput
+from backend.app.intelligence.anomaly_detection.anomaly_scorer import score_transaction
+from backend.app.schemas.financial_twin import FinancialTwin
+from backend.app.schemas.transaction import TransactionInput
 
 
 def test_score_transaction_flags_large_new_foreign_beneficiary():
