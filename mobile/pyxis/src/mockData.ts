@@ -4,11 +4,12 @@
  * so each customer shows a distinct risk profile and safer-workflow guidance.
  */
 
+import { SANDBOXES } from './sandboxData';
 import { DashboardStats, RiskCase, User } from './types';
 
 export const DEMO_USER: User = {
   id: 'OFFICER-12',
-  name: 'Priyan Kannaa',
+  name: 'Prieyan',
   email: 'prie@gmail.com',
   role: 'Compliance Officer',
 };
@@ -33,7 +34,7 @@ export const FLAGGED_TREND: { label: string; value: number }[] = [
   { label: 'Sun', value: 7 },
 ];
 
-export const CASES: RiskCase[] = [
+const RAW_CASES: Omit<RiskCase, 'sandbox'>[] = [
   {
     id: 'CASE-1001',
     customerId: 'CUST-001',
@@ -324,6 +325,12 @@ export const CASES: RiskCase[] = [
     ],
   },
 ];
+
+/** Attach each customer's isolated agent sandbox (see src/sandboxData.ts). */
+export const CASES: RiskCase[] = RAW_CASES.map(c => ({
+  ...c,
+  sandbox: SANDBOXES[c.id],
+}));
 
 export function getCaseById(id: string): RiskCase | undefined {
   return CASES.find(c => c.id === id);

@@ -60,9 +60,10 @@ export default function LoginScreen() {
           contentContainerStyle={styles.sheet}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
-          <Text style={styles.sheetTitle}>Login</Text>
           <View style={styles.signupRow}>
-            <Text style={styles.muted}>Compliance officer access</Text>
+            <View style={styles.userIconContainer}>
+              <Icon name="user" set="feather" size={32} color="white" />
+            </View>
           </View>
 
           <Field
@@ -103,11 +104,6 @@ export default function LoginScreen() {
             style={styles.loginBtn}
           />
 
-          <View style={styles.hintBox}>
-            <Text style={styles.hintText}>
-              Demo credentials · prie@gmail.com / 123456
-            </Text>
-          </View>
 
           <View style={styles.privacyRow}>
             <Icon name="shield" size={15} color={colors.textFaint} style={styles.privacyGlyph} />
@@ -183,7 +179,16 @@ const styles = StyleSheet.create({
     marginTop: -spacing.xl,
   },
   sheetTitle: { fontSize: font.h1, fontWeight: '800', color: colors.text, textAlign: 'center' },
-  signupRow: { alignItems: 'center', marginTop: spacing.xs, marginBottom: spacing.xl },
+  signupRow: { alignItems: 'center', marginTop: 5, marginBottom: spacing.xl },
+  userIconContainer: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
   muted: { color: colors.textMuted, fontSize: font.small },
   field: {
     flexDirection: 'row',
