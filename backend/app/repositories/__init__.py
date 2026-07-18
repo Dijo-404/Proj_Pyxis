@@ -1,1 +1,1 @@
-"""Persistence abstractions; application services depend on these boundaries."""
+"""Persistence abstractions for SQLite and simulated risk-engine state."""

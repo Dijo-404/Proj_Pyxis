@@ -1,9 +1,11 @@
-"""Shared strict API types for the compliance backend."""
+"""Shared API response models and strict compliance-domain types."""
 
 from enum import StrEnum
-from typing import Annotated
+from typing import Annotated, Generic, TypeVar
 
-from pydantic import StringConstraints
+from pydantic import BaseModel, StringConstraints
+
+T = TypeVar("T")
 
 Identifier = Annotated[
     str,
@@ -16,6 +18,19 @@ Identifier = Annotated[
 ]
 ShortText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)]
 LongText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=10_000)]
+
+
+class ApiResponse(BaseModel, Generic[T]):
+    data: T
+
+
+class ErrorDetail(BaseModel):
+    code: str
+    message: str
+
+
+class ErrorResponse(BaseModel):
+    error: ErrorDetail
 
 
 class RiskLevel(StrEnum):

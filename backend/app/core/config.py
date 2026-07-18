@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     environment: str = "development"
     api_host: str = "127.0.0.1"
     api_port: int = 8000
+    api_prefix: str = "/api/v1"
     api_v1_prefix: str = "/api/v1"
     database_path: Path = Path("./pyxis.db")
     database_auto_create: bool = True
@@ -30,6 +31,7 @@ class Settings(BaseSettings):
     gemma_base_url: str = "http://127.0.0.1:8080/v1"
     gemma_model: str = "gemma"
     gemma_timeout_seconds: float = 60.0
+    local_gemma_enabled: bool = True
     document_storage_path: Path = Path("./data/documents")
     report_output_path: Path = Path("./reports")
     max_document_bytes: int = 20 * 1024 * 1024
