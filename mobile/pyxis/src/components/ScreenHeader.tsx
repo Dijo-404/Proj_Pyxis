@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from './Icon';
 import { colors, font, shadow, spacing } from '../theme';
 
 export default function ScreenHeader({
@@ -17,7 +18,7 @@ export default function ScreenHeader({
     <View style={styles.wrap}>
       {onBack ? (
         <TouchableOpacity style={styles.back} onPress={onBack} activeOpacity={0.7}>
-          <Text style={styles.backGlyph}>‹</Text>
+          <Icon name="angle-left" size={24} color={colors.text} />
         </TouchableOpacity>
       ) : (
         <View style={styles.back} />
@@ -49,7 +50,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     ...shadow.card,
   },
-  backGlyph: { fontSize: 28, color: colors.text, marginTop: -3 },
   center: { flex: 1, alignItems: 'center', paddingHorizontal: spacing.sm },
   title: { fontSize: font.h3, fontWeight: '800', color: colors.text },
   subtitle: { fontSize: font.tiny, color: colors.textMuted, marginTop: 1 },

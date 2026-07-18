@@ -7,6 +7,7 @@ import { Card, Pill, PrimaryButton, ProgressBar, RiskBadge, SectionTitle } from 
 import { getCaseById } from '../mockData';
 import { colors, font, radius, riskBand, shadow, spacing } from '../theme';
 import {
+  CustomerTransaction,
   EvidenceStatus,
   ReviewAction,
   RiskCase,
@@ -14,9 +15,10 @@ import {
   ScenarioCategory,
 } from '../types';
 
-type Tab = 'twin' | 'investigation' | 'scenarios' | 'evidence' | 'decision';
+type Tab = 'transactions' | 'twin' | 'investigation' | 'scenarios' | 'evidence' | 'decision';
 
 const TABS: { key: Tab; label: string }[] = [
+  { key: 'transactions', label: 'Transactions' },
   { key: 'twin', label: 'Twin' },
   { key: 'investigation', label: 'Gemma' },
   { key: 'scenarios', label: 'Scenarios' },
@@ -34,13 +36,15 @@ export default function CaseDetailScreen({
   caseId,
   onBack,
   onAskGemma,
+  onOpenSandbox,
 }: {
   caseId: string;
   onBack: () => void;
   onAskGemma: (id: string) => void;
+  onOpenSandbox: (id: string) => void;
 }) {
   const data = getCaseById(caseId);
-  const [tab, setTab] = useState<Tab>('twin');
+  const [tab, setTab] = useState<Tab>('transactions');
 
   if (!data) {
     return (
@@ -99,14 +103,111 @@ export default function CaseDetailScreen({
       </ScrollView>
 
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
+        {tab === 'transactions' && (
+          <TransactionsTab data={data} onOpenSandbox={() => onOpenSandbox(data.id)} />
+        )}
         {tab === 'twin' && <TwinTab data={data} />}
-        {tab === 'investigation' && <InvestigationTab data={data} onAskGemma={() => onAskGemma(data.id)} />}
+        {tab === 'investigation' && (
+          <InvestigationTab
+            data={data}
+            onAskGemma={() => onAskGemma(data.id)}
+            onOpenSandbox={() => onOpenSandbox(data.id)}
+          />
+        )}
         {tab === 'scenarios' && <ScenarioTab data={data} />}
         {tab === 'evidence' && <EvidenceTab data={data} />}
         {tab === 'decision' && <DecisionTab data={data} />}
         <View style={{ height: spacing.xxl }} />
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/* ---------- Transactions: risky vs non-risky for this customer ---------- */
+function TransactionsTab({ data, onOpenSandbox }: { data: RiskCase; onOpenSandbox: () => void }) {
+  const [open, setOpen] = useState<string | null>(null);
+  const risky = data.sandbox.transactions.filter(t => t.risky);
+  const clean = data.sandbox.transactions.filter(t => !t.risky);
+
+  return (
+    <View>
+      <View style={styles.txnSummaryRow}>
+        <View style={[styles.txnSummaryTile, { backgroundColor: colors.criticalSoft }]}>
+          <Text style={[styles.txnSummaryValue, { color: colors.critical }]}>{risky.length}</Text>
+          <Text style={styles.txnSummaryLabel}>Risky</Text>
+        </View>
+        <View style={[styles.txnSummaryTile, { backgroundColor: colors.lowSoft }]}>
+          <Text style={[styles.txnSummaryValue, { color: colors.low }]}>{clean.length}</Text>
+          <Text style={styles.txnSummaryLabel}>Non-risky</Text>
+        </View>
+      </View>
+
+      {risky.length > 0 && (
+        <>
+          <SectionTitle>Flagged as risk</SectionTitle>
+          {risky
+            .sort((a, b) => b.riskScore - a.riskScore)
+            .map(t => (
+              <TxnRow key={t.id} t={t} open={open === t.id} onToggle={() => setOpen(open === t.id ? null : t.id)} />
+            ))}
+        </>
+      )}
+
+      <SectionTitle>Non-risky activity</SectionTitle>
+      {clean.map(t => (
+        <TxnRow key={t.id} t={t} open={open === t.id} onToggle={() => setOpen(open === t.id ? null : t.id)} />
+      ))}
+
+      <PrimaryButton
+        title="Open the branch graph in Sandbox"
+        icon="flask"
+        onPress={onOpenSandbox}
+        variant="outline"
+        style={{ marginTop: spacing.lg }}
+      />
+    </View>
+  );
+}
+
+function TxnRow({ t, open, onToggle }: { t: CustomerTransaction; open: boolean; onToggle: () => void }) {
+  const tint = t.risky ? colors.critical : colors.low;
+  return (
+    <TouchableOpacity activeOpacity={0.9} onPress={onToggle}>
+      <Card style={styles.txnCard}>
+        <View style={styles.txnTop}>
+          <View style={[styles.txnDot, { backgroundColor: tint }]} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.txnLabel}>{t.label}</Text>
+            <Text style={styles.txnMeta}>
+              {t.id} · {t.timestamp}
+            </Text>
+          </View>
+          <View style={{ alignItems: 'flex-end' }}>
+            <Text style={styles.txnAmount}>
+              {t.direction === 'IN' ? '+' : '−'}
+              {t.amount}
+            </Text>
+            <Text style={[styles.txnReason, { color: tint }]}>{t.reason}</Text>
+          </View>
+        </View>
+        {open ? (
+          <View style={styles.txnDetail}>
+            <Text style={styles.txnExplain}>{t.explanation}</Text>
+            {t.firedSignals.length > 0 ? (
+              <View style={styles.txnSignals}>
+                {t.firedSignals.map(s => (
+                  <View key={s} style={styles.txnSignalChip}>
+                    <Icon name="bolt" size={10} color={colors.critical} style={{ marginRight: 4 }} />
+                    <Text style={styles.txnSignalText}>{s}</Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+          </View>
+        ) : null}
+        <Text style={styles.expandHint}>{open ? 'Tap to collapse' : 'Tap for anomaly detail'}</Text>
+      </Card>
+    </TouchableOpacity>
   );
 }
 
@@ -150,7 +251,15 @@ function TwinTab({ data }: { data: RiskCase }) {
 }
 
 /* ---------- Gemma Investigation (§27 Screen 5) ---------- */
-function InvestigationTab({ data, onAskGemma }: { data: RiskCase; onAskGemma: () => void }) {
+function InvestigationTab({
+  data,
+  onAskGemma,
+  onOpenSandbox,
+}: {
+  data: RiskCase;
+  onAskGemma: () => void;
+  onOpenSandbox: () => void;
+}) {
   return (
     <View>
       <SectionTitle>Gemma investigation timeline</SectionTitle>
@@ -178,11 +287,17 @@ function InvestigationTab({ data, onAskGemma }: { data: RiskCase; onAskGemma: ()
         </Text>
       </View>
       <PrimaryButton
+        title="Open isolated agent sandbox"
+        icon="flask"
+        onPress={onOpenSandbox}
+        style={{ marginTop: spacing.lg }}
+      />
+      <PrimaryButton
         title="Ask Gemma about this case"
         icon="magic"
         onPress={onAskGemma}
         variant="outline"
-        style={{ marginTop: spacing.lg }}
+        style={{ marginTop: spacing.md }}
       />
     </View>
   );
@@ -216,9 +331,9 @@ function ScenarioCard({ s, open, onToggle }: { s: Scenario; open: boolean; onTog
       </TouchableOpacity>
       {open && (
         <View style={styles.scenDetail}>
-          <EvidenceList title="Supporting" items={s.supporting} color={colors.low} glyph="✓" />
-          <EvidenceList title="Contradicting" items={s.contradicting} color={colors.critical} glyph="✕" />
-          <EvidenceList title="Unknown" items={s.unknown} color={colors.medium} glyph="?" />
+          <EvidenceList title="Supporting" items={s.supporting} color={colors.low} icon="check-circle" />
+          <EvidenceList title="Contradicting" items={s.contradicting} color={colors.critical} icon="times-circle" />
+          <EvidenceList title="Unknown" items={s.unknown} color={colors.medium} icon="question-circle" />
         </View>
       )}
       <Text style={styles.expandHint}>{open ? 'Tap to collapse' : 'Tap for evidence'}</Text>
@@ -230,12 +345,12 @@ function EvidenceList({
   title,
   items,
   color,
-  glyph,
+  icon,
 }: {
   title: string;
   items: string[];
   color: string;
-  glyph: string;
+  icon: string;
 }) {
   if (items.length === 0) return null;
   return (
@@ -243,7 +358,7 @@ function EvidenceList({
       <Text style={[styles.evTitle, { color }]}>{title}</Text>
       {items.map(it => (
         <View key={it} style={styles.evItem}>
-          <Text style={[styles.evGlyph, { color }]}>{glyph}</Text>
+          <Icon name={icon} size={13} color={color} style={styles.evGlyph} />
           <Text style={styles.evText}>{it}</Text>
         </View>
       ))}
@@ -252,11 +367,11 @@ function EvidenceList({
 }
 
 /* ---------- Evidence Matrix (§27 Screen 7) ---------- */
-const STATUS_SYMBOL: Record<EvidenceStatus, { s: string; color: string }> = {
-  MATCH: { s: '✓', color: colors.low },
-  CONTRADICT: { s: '✕', color: colors.critical },
-  UNKNOWN: { s: '?', color: colors.medium },
-  PARTIAL: { s: '◐', color: colors.accent },
+const STATUS_SYMBOL: Record<EvidenceStatus, { icon: string; color: string }> = {
+  MATCH: { icon: 'check-circle', color: colors.low },
+  CONTRADICT: { icon: 'times-circle', color: colors.critical },
+  UNKNOWN: { icon: 'question-circle', color: colors.medium },
+  PARTIAL: { icon: 'adjust', color: colors.accent },
 };
 
 function EvidenceTab({ data }: { data: RiskCase }) {
@@ -279,10 +394,14 @@ function EvidenceTab({ data }: { data: RiskCase }) {
                 <Text style={styles.matrixSignal}>{row.signal}</Text>
                 {data.scenarios.map(s => {
                   const st = row.byScenario[s.id];
-                  const sym = st ? STATUS_SYMBOL[st] : { s: '–', color: colors.textFaint };
+                  const sym = st ? STATUS_SYMBOL[st] : null;
                   return (
                     <View key={s.id} style={styles.matrixCell}>
-                      <Text style={[styles.matrixSym, { color: sym.color }]}>{sym.s}</Text>
+                      {sym ? (
+                        <Icon name={sym.icon} size={18} color={sym.color} />
+                      ) : (
+                        <Text style={[styles.matrixSym, { color: colors.textFaint }]}>–</Text>
+                      )}
                     </View>
                   );
                 })}
@@ -294,9 +413,7 @@ function EvidenceTab({ data }: { data: RiskCase }) {
       <View style={styles.matrixLegend}>
         {(Object.keys(STATUS_SYMBOL) as EvidenceStatus[]).map(k => (
           <View key={k} style={styles.legendChip}>
-            <Text style={[styles.matrixSym, { color: STATUS_SYMBOL[k].color, fontSize: 14 }]}>
-              {STATUS_SYMBOL[k].s}
-            </Text>
+            <Icon name={STATUS_SYMBOL[k].icon} size={14} color={STATUS_SYMBOL[k].color} />
             <Text style={styles.legendChipText}>{k.toLowerCase()}</Text>
           </View>
         ))}
@@ -317,7 +434,7 @@ function DecisionTab({ data }: { data: RiskCase }) {
         <Text style={styles.critQuestion}>{data.criticalQuestion.question}</Text>
         <Text style={styles.critWhy}>{data.criticalQuestion.whyItMatters}</Text>
         <View style={styles.critAction}>
-          <Text style={styles.critActionGlyph}>➜</Text>
+          <Icon name="arrow-circle-right" size={16} color={colors.accent} style={styles.critActionGlyph} />
           <Text style={styles.critActionText}>{data.criticalQuestion.recommendedAction}</Text>
         </View>
       </View>
@@ -333,7 +450,7 @@ function DecisionTab({ data }: { data: RiskCase }) {
               <Text style={styles.cfCond}>{cf.condition}</Text>
               <View style={styles.cfScores}>
                 <Text style={[styles.cfScore, { color: fromBand.color }]}>{cf.from}</Text>
-                <Text style={styles.cfArrow}>→</Text>
+                <Icon name="long-arrow-right" size={14} color={colors.textFaint} style={styles.cfArrow} />
                 <Text style={[styles.cfScore, { color: toBand.color }]}>{cf.to}</Text>
               </View>
             </View>
@@ -444,7 +561,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  askGlyph: { color: colors.onPrimary, fontSize: 18, fontWeight: '900' },
   strip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -473,6 +589,31 @@ const styles = StyleSheet.create({
   tabText: { fontSize: font.small, color: colors.textMuted, fontWeight: '700' },
   tabTextOn: { color: colors.onPrimary },
   body: { paddingHorizontal: spacing.lg, paddingTop: spacing.xs },
+
+  // Transactions
+  txnSummaryRow: { flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg },
+  txnSummaryTile: { flex: 1, borderRadius: radius.md, padding: spacing.md, alignItems: 'center' },
+  txnSummaryValue: { fontSize: font.h1, fontWeight: '900' },
+  txnSummaryLabel: { fontSize: font.small, fontWeight: '700', color: colors.textMuted, marginTop: 2 },
+  txnCard: { marginBottom: spacing.md },
+  txnTop: { flexDirection: 'row', alignItems: 'center' },
+  txnDot: { width: 9, height: 9, borderRadius: 5, marginRight: spacing.md },
+  txnLabel: { fontSize: font.body, fontWeight: '700', color: colors.text },
+  txnMeta: { fontSize: font.tiny, color: colors.textFaint, marginTop: 2 },
+  txnAmount: { fontSize: font.body, fontWeight: '800', color: colors.text },
+  txnReason: { fontSize: font.tiny, fontWeight: '700', marginTop: 2 },
+  txnDetail: { marginTop: spacing.md, borderTopWidth: 1, borderTopColor: colors.divider, paddingTop: spacing.md },
+  txnExplain: { fontSize: font.small, color: colors.text, lineHeight: 19 },
+  txnSignals: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.md },
+  txnSignalChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.criticalSoft,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: radius.pill,
+  },
+  txnSignalText: { fontSize: font.tiny, color: colors.critical, fontWeight: '700' },
 
   // Twin
   twinHeadRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm },
@@ -509,7 +650,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   stepDotDone: { backgroundColor: colors.primary, borderColor: colors.primary },
-  stepCheck: { color: colors.onPrimary, fontSize: 12, fontWeight: '900' },
   stepLine: { flex: 1, width: 2, backgroundColor: colors.primaryLight, marginVertical: 2 },
   stepBody: { flex: 1, paddingBottom: spacing.lg, paddingLeft: spacing.sm },
   stepLabel: { fontSize: font.body, color: colors.text, fontWeight: '600' },
@@ -521,7 +661,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     marginTop: spacing.md,
   },
-  aiSafetyGlyph: { fontSize: 16, marginRight: spacing.sm },
+  aiSafetyGlyph: { marginRight: spacing.sm, marginTop: 1 },
   aiSafetyText: { flex: 1, fontSize: font.small, color: colors.primaryDark, lineHeight: 19 },
 
   // Scenario
@@ -534,7 +674,7 @@ const styles = StyleSheet.create({
   evList: { marginBottom: spacing.md },
   evTitle: { fontSize: font.tiny, fontWeight: '800', letterSpacing: 0.5, marginBottom: 4 },
   evItem: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 3 },
-  evGlyph: { width: 18, fontSize: font.small, fontWeight: '900' },
+  evGlyph: { width: 18, marginTop: 2 },
   evText: { flex: 1, fontSize: font.small, color: colors.text, lineHeight: 19 },
   expandHint: { fontSize: font.tiny, color: colors.textFaint, marginTop: spacing.sm, textAlign: 'center' },
 
@@ -579,13 +719,13 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
   },
-  critActionGlyph: { color: colors.accent, fontSize: 16, marginRight: spacing.sm, fontWeight: '900' },
+  critActionGlyph: { marginRight: spacing.sm, marginTop: 1 },
   critActionText: { flex: 1, color: colors.onPrimary, fontSize: font.small, lineHeight: 19 },
   cfRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.md },
   cfCond: { flex: 1, fontSize: font.small, color: colors.text, paddingRight: spacing.md },
   cfScores: { flexDirection: 'row', alignItems: 'center' },
   cfScore: { fontSize: font.h3, fontWeight: '800' },
-  cfArrow: { fontSize: font.body, color: colors.textFaint, marginHorizontal: spacing.sm },
+  cfArrow: { marginHorizontal: spacing.sm },
   cfNote: { fontSize: font.tiny, color: colors.textFaint, marginTop: spacing.sm, fontStyle: 'italic' },
   wfRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: spacing.sm },
   wfNum: {

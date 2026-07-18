@@ -65,10 +65,11 @@ export function Pill({
 /* ---------- Risk badge (derives band from score) ---------- */
 export function RiskBadge({ score }: { score: number }) {
   const band = riskBand(score);
+  const badgeColor = score >= 80 ? '#FF0000' : (score >= 50 ? '#FFA500' : '#00FF00');
   return (
-    <View style={[styles.riskBadge, { backgroundColor: band.soft }]}>
-      <View style={[styles.riskDot, { backgroundColor: band.color }]} />
-      <Text style={[styles.riskText, { color: band.color }]}>
+    <View style={[styles.riskBadge, { backgroundColor: 'rgba(0, 0, 0, 0.08)' }]}>
+      <View style={[styles.riskDot, { backgroundColor: badgeColor }]} />
+      <Text style={[styles.riskText, { color: badgeColor }]}>
         {band.label} · {score}
       </Text>
     </View>
@@ -217,6 +218,90 @@ export function MiniBarChart({
   );
 }
 
+/* ---------- Radial score gauge (no SVG deps) ----------
+ * Approximates a ring with a thick tinted track and an arc built from
+ * stacked segments; good enough for a KPI dial without pulling in SVG. */
+export function ScoreGauge({
+  value, // 0-100
+  size = 120,
+  color = colors.critical,
+  label,
+  caption,
+}: {
+  value: number;
+  size?: number;
+  color?: string;
+  label?: string;
+  caption?: string;
+}) {
+  const clamped = Math.max(0, Math.min(100, value));
+  const stroke = Math.round(size * 0.09);
+  const segCount = 40;
+  const litSegs = Math.round((clamped / 100) * segCount);
+  const r = size / 2 - stroke;
+  return (
+    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      {Array.from({ length: segCount }).map((_, i) => {
+        // start at top (-90deg), sweep clockwise
+        const angle = (i / segCount) * 2 * Math.PI - Math.PI / 2;
+        const cx = size / 2 + r * Math.cos(angle) - stroke / 2;
+        const cy = size / 2 + r * Math.sin(angle) - stroke / 2;
+        const on = i < litSegs;
+        return (
+          <View
+            key={i}
+            style={{
+              position: 'absolute',
+              left: cx,
+              top: cy,
+              width: stroke,
+              height: stroke,
+              borderRadius: stroke / 2,
+              backgroundColor: on ? color : colors.divider,
+              transform: [{ scale: on ? 1 : 0.62 }],
+            }}
+          />
+        );
+      })}
+      <View style={{ alignItems: 'center' }}>
+        <Text style={{ fontSize: size * 0.28, fontWeight: '900', color }}>{clamped}</Text>
+        {label ? (
+          <Text style={{ fontSize: font.tiny, color: colors.textMuted, fontWeight: '700', letterSpacing: 0.4 }}>
+            {label}
+          </Text>
+        ) : null}
+      </View>
+      {caption ? (
+        <Text style={{ position: 'absolute', bottom: -18, fontSize: font.tiny, color: colors.textFaint }}>
+          {caption}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+/* ---------- Small labeled chip (icon optional) ---------- */
+export function Chip({
+  label,
+  icon,
+  iconSet = 'fa',
+  color = colors.textMuted,
+  soft = colors.surfaceAlt,
+}: {
+  label: string;
+  icon?: string;
+  iconSet?: 'fa' | 'feather';
+  color?: string;
+  soft?: string;
+}) {
+  return (
+    <View style={[styles.chip, { backgroundColor: soft }]}>
+      {icon ? <Icon name={icon} set={iconSet} size={11} color={color} style={styles.chipIcon} /> : null}
+      <Text style={[styles.chipText, { color }]}>{label}</Text>
+    </View>
+  );
+}
+
 /* ---------- Divider ---------- */
 export function Divider({ style }: { style?: StyleProp<ViewStyle> }) {
   return <View style={[styles.divider, style]} />;
@@ -317,4 +402,14 @@ const styles = StyleSheet.create({
   },
   lvLabel: { fontSize: font.small, color: colors.textMuted },
   lvValue: { fontSize: font.small, fontWeight: '600', color: colors.text, maxWidth: '55%' },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.md,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
+  },
+  chipIcon: { marginRight: 5 },
+  chipText: { fontSize: font.tiny, fontWeight: '700', letterSpacing: 0.2 },
 });

@@ -1,23 +1,21 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../auth';
 import {
   Card,
   MiniBarChart,
   ProgressBar,
-  RiskBadge,
   SectionTitle,
   StatTile,
 } from '../components/ui';
 import Icon from '../components/Icon';
 import { CASES, DASHBOARD, FLAGGED_TREND } from '../mockData';
-import { colors, font, radius, riskBand, shadow, spacing } from '../theme';
-import { RiskCase } from '../types';
+import { colors, font, radius, shadow, spacing } from '../theme';
 
 export default function DashboardScreen({
-  onOpenCase,
-  onOpenQueue,
+  onOpenCase: _onOpenCase,
+  onOpenQueue: _onOpenQueue,
 }: {
   onOpenCase: (id: string) => void;
   onOpenQueue: () => void;
@@ -30,16 +28,19 @@ export default function DashboardScreen({
   );
 
   return (
-    <SafeAreaView style={styles.root} edges={['top']}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}>
+    <ImageBackground
+      source={require('../../assets/dash.jpg')}
+      style={styles.backgroundImage}
+      blurRadius={6}>
+      <View style={styles.overlay}>
+        <SafeAreaView style={styles.root} edges={['top']}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
-              {user?.name.charAt(0) ?? 'P'}
-            </Text>
+            <Icon name="user" set="feather" size={24} color="white" />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.welcome}>Welcome back</Text>
@@ -52,7 +53,10 @@ export default function DashboardScreen({
         </View>
 
         {/* Portfolio risk hero — orange gradient-like card */}
-        <View style={styles.hero}>
+        <ImageBackground
+          source={require('../../assets/hero.jpg')}
+          style={styles.hero}
+          imageStyle={styles.heroImage}>
           <Text style={styles.heroLabel}>Portfolio risk exposure</Text>
           <View style={styles.heroRow}>
             <Text style={styles.heroValue}>{portfolioRisk}</Text>
@@ -73,7 +77,7 @@ export default function DashboardScreen({
               <Text style={styles.heroTagText}>Local Gemma · online</Text>
             </View>
           </View>
-        </View>
+        </ImageBackground>
 
         {/* Command Center stats (§27 Screen 2) */}
         <View style={styles.statGrid}>
@@ -129,85 +133,18 @@ export default function DashboardScreen({
           </View>
         </Card>
 
-        {/* Per-user risk & safer workflow */}
-        <SectionTitle
-          right={
-            <TouchableOpacity onPress={onOpenQueue}>
-              <Text style={styles.link}>View queue</Text>
-            </TouchableOpacity>
-          }>
-          Customer risk & safer workflow
-        </SectionTitle>
-
-        {CASES.map(c => (
-          <CustomerRiskCard key={c.id} data={c} onPress={() => onOpenCase(c.id)} />
-        ))}
-
         <View style={{ height: spacing.xxl }} />
       </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-function CustomerRiskCard({
-  data,
-  onPress,
-}: {
-  data: RiskCase;
-  onPress: () => void;
-}) {
-  const band = riskBand(data.currentRisk);
-  const nextStep = data.saferWorkflow[0];
-  return (
-    <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
-      <Card style={styles.custCard}>
-        <View style={styles.custHead}>
-          <View style={[styles.custAvatar, { backgroundColor: band.soft }]}>
-            <Text style={[styles.custAvatarText, { color: band.color }]}>
-              {data.customerName.charAt(0)}
-            </Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.custName} numberOfLines={1}>
-              {data.customerName}
-            </Text>
-            <Text style={styles.custMeta}>
-              {data.customerType} · {data.business}
-            </Text>
-          </View>
-          <RiskBadge score={data.currentRisk} />
-        </View>
-
-        <View style={styles.riskLine}>
-          <Text style={styles.riskLineLabel}>Risk score</Text>
-          <View style={{ flex: 1, marginHorizontal: spacing.md }}>
-            <ProgressBar value={data.currentRisk} color={band.color} />
-          </View>
-          <Text style={[styles.riskLineValue, { color: band.color }]}>
-            {data.currentRisk}
-          </Text>
-        </View>
-
-        {/* Safer workflow — the recommended next step */}
-        <View style={styles.safer}>
-          <View style={styles.saferGlyph}>
-            <Icon name="compass" set="feather" size={16} color={colors.primaryDark} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.saferTitle}>Safer workflow</Text>
-            <Text style={styles.saferText} numberOfLines={2}>
-              {nextStep}
-            </Text>
-          </View>
-          <Icon name="angle-right" size={20} color={colors.textFaint} style={styles.chevron} />
-        </View>
-      </Card>
-    </TouchableOpacity>
+        </SafeAreaView>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  backgroundImage: { flex: 1 },
+  overlay: { flex: 1, backgroundColor: 'rgba(255, 255, 255, 0)' },
+  root: { flex: 1, backgroundColor: 'transparent' },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
   header: {
     flexDirection: 'row',
@@ -215,15 +152,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    backgroundColor: colors.primary,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
   },
-  avatarText: { color: colors.onPrimary, fontSize: font.h3, fontWeight: '800' },
   welcome: { color: colors.textMuted, fontSize: font.small },
   userName: { color: colors.text, fontSize: font.h3, fontWeight: '800' },
   logout: {
@@ -243,6 +179,10 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     marginBottom: spacing.lg,
     ...shadow.floating,
+    overflow: 'hidden',
+  },
+  heroImage: {
+    borderRadius: radius.lg,
   },
   heroLabel: { color: 'rgba(255,255,255,0.9)', fontSize: font.small, fontWeight: '600' },
   heroRow: { flexDirection: 'row', alignItems: 'flex-end', marginVertical: spacing.sm },
@@ -283,40 +223,4 @@ const styles = StyleSheet.create({
   legendDot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
   legendText: { fontSize: font.tiny, color: colors.textMuted },
   link: { color: colors.primary, fontSize: font.small, fontWeight: '700' },
-  custCard: { marginBottom: spacing.md },
-  custHead: { flexDirection: 'row', alignItems: 'center' },
-  custAvatar: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  custAvatarText: { fontSize: font.h3, fontWeight: '800' },
-  custName: { fontSize: font.body, fontWeight: '700', color: colors.text },
-  custMeta: { fontSize: font.small, color: colors.textMuted, marginTop: 1 },
-  riskLine: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.lg },
-  riskLineLabel: { fontSize: font.tiny, color: colors.textFaint, width: 58 },
-  riskLineValue: { fontSize: font.body, fontWeight: '800', width: 30, textAlign: 'right' },
-  safer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surfaceAlt,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginTop: spacing.md,
-  },
-  saferGlyph: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    backgroundColor: colors.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  saferTitle: { fontSize: font.tiny, color: colors.primaryDark, fontWeight: '800', letterSpacing: 0.3 },
-  saferText: { fontSize: font.small, color: colors.text, marginTop: 2, lineHeight: 18 },
-  chevron: { marginLeft: spacing.sm },
 });
