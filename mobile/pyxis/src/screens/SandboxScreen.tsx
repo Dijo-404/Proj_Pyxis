@@ -19,9 +19,9 @@ import {
   ScoreGauge,
   SectionTitle,
 } from '../components/ui';
-import { getCaseById } from '../mockData';
 import { colors, font, radius, riskBand, shadow, spacing } from '../theme';
 import { Actor, AgentStage, CustomerTransaction, FlowNode, RiskCase } from '../types';
+import { useWorkspace } from '../workspace';
 
 /** Actor styling — Gemma reasoning vs deterministic local code. */
 const ACTOR_META: Record<Actor, { label: string; color: string; soft: string; icon: string }> = {
@@ -45,7 +45,8 @@ export default function SandboxScreen({
   caseId: string;
   onBack: () => void;
 }) {
-  const data = getCaseById(caseId);
+  const { data: workspace } = useWorkspace();
+  const data = workspace?.cases.find(item => item.id === caseId);
 
   if (!data) {
     return (

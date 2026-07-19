@@ -1,6 +1,7 @@
 """Strict Member 1 to Member 2 risk-case boundary and case API contracts."""
 
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -39,6 +40,14 @@ class RiskCaseImport(BaseModel):
 
     case_id: Identifier
     customer_id: Identifier
+    customer_name: ShortText = "Unknown customer"
+    customer_type: ShortText = "UNKNOWN"
+    business: ShortText = "Not provided"
+    trigger_transaction_id: Identifier = "UNAVAILABLE"
+    trigger_summary: LongText = "No trigger summary provided"
+    trigger_amount: ShortText = "₹0"
+    assigned_to: ShortText = "Unassigned"
+    location: ShortText = "Not provided"
     risk_score: float = Field(ge=0, le=100)
     risk_level: RiskLevel
     anomalies: list[ShortText] = Field(default_factory=list, max_length=200)
@@ -48,6 +57,7 @@ class RiskCaseImport(BaseModel):
     missing_evidence: list[LongText] = Field(default_factory=list, max_length=500)
     decision_critical_evidence: DecisionCriticalEvidence | None = None
     recommended_actions: list[ShortText] = Field(default_factory=list, max_length=100)
+    workspace_data: dict[str, Any] = Field(default_factory=dict)
 
 
 class RiskCaseUpdate(BaseModel):
@@ -70,6 +80,14 @@ class RiskCaseSummary(BaseModel):
 
     case_id: Identifier
     customer_id: Identifier
+    customer_name: str
+    customer_type: str
+    business: str
+    trigger_transaction_id: Identifier
+    trigger_summary: str
+    trigger_amount: str
+    assigned_to: str
+    location: str
     risk_score: float
     risk_level: RiskLevel
     status: CaseStatus
@@ -84,3 +102,4 @@ class RiskCaseRead(RiskCaseSummary):
     evidence: list[EvidenceRead]
     decision_critical_evidence: dict[str, str] | None
     recommended_actions: list[str]
+    workspace_data: dict[str, Any]

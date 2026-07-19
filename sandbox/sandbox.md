@@ -67,7 +67,7 @@ Report Writer and deterministic renderer
 - [Evidence critic](../local_ai/gemma/evidence_critic.py)
 - [Report writer](../local_ai/gemma/report_writer.py)
 - [Structured-output parser](../local_ai/gemma/output_parser.py)
-- [Synthetic risk-case input](mock_risk_case.json)
+- [Synthetic case generator](../data_pipeline/synthetic_data/dataset.py)
 
 ## Agent prompt files
 

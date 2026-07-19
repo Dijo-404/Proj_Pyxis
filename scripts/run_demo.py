@@ -2,13 +2,11 @@
 
 import argparse
 import json
-from pathlib import Path
 
 import httpx
 
+from data_pipeline.synthetic_data.dataset import generate_case_dataset
 from local_ai.gemma.client import validate_local_base_url
-
-DEFAULT_CASE_FILE = Path(__file__).parents[1] / "sandbox" / "mock_risk_case.json"
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -18,14 +16,26 @@ def parse_arguments() -> argparse.Namespace:
         default="http://127.0.0.1:8000/api/v1",
         help="Private or loopback Pyxis API base URL",
     )
-    parser.add_argument("--case-file", type=Path, default=DEFAULT_CASE_FILE)
+    parser.add_argument(
+        "--case-id",
+        default="CASE-1001",
+        help="Case ID from the deterministic synthetic dataset",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     arguments = parse_arguments()
     base_url = f"{validate_local_base_url(arguments.base_url)}/"
-    payload = json.loads(arguments.case_file.read_text(encoding="utf-8"))
+    generated = generate_case_dataset()
+    selected = next(
+        (item for item in generated if item.payload["case_id"] == arguments.case_id),
+        None,
+    )
+    if selected is None:
+        available = ", ".join(str(item.payload["case_id"]) for item in generated)
+        raise SystemExit(f"Unknown synthetic case ID. Available cases: {available}")
+    payload = selected.payload
 
     with httpx.Client(
         base_url=base_url,

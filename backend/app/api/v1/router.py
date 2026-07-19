@@ -10,6 +10,7 @@ from backend.app.api.v1 import (
     reports,
     transactions,
     websocket,
+    workspace,
 )
 from backend.app.api.v1.routes import (
     cases as risk_engine_cases,
@@ -29,6 +30,7 @@ api_router.include_router(investigations.router)
 api_router.include_router(documents.router)
 api_router.include_router(reports.router)
 api_router.include_router(websocket.router)
+api_router.include_router(workspace.router)
 # Preserve the recovered branch's non-conflicting public endpoints.
 api_router.include_router(risk_engine_transactions.router, deprecated=True)
 api_router.include_router(risk_engine_customers.router, deprecated=True)

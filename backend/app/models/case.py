@@ -3,7 +3,7 @@
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import JSON, CheckConstraint, Float, Integer, String
+from sqlalchemy import JSON, CheckConstraint, Float, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.app.core.sql_types import UTCDateTime
@@ -21,6 +21,14 @@ class RiskCase(Base):
 
     case_id: Mapped[str] = mapped_column(String(128), primary_key=True)
     customer_id: Mapped[str] = mapped_column(String(128), index=True)
+    customer_name: Mapped[str] = mapped_column(String(200), default="Unknown customer")
+    customer_type: Mapped[str] = mapped_column(String(32), default="UNKNOWN")
+    business: Mapped[str] = mapped_column(String(200), default="Not provided")
+    trigger_transaction_id: Mapped[str] = mapped_column(String(128), default="UNAVAILABLE")
+    trigger_summary: Mapped[str] = mapped_column(Text, default="No trigger summary provided")
+    trigger_amount: Mapped[str] = mapped_column(String(64), default="₹0")
+    assigned_to: Mapped[str] = mapped_column(String(128), default="Unassigned")
+    location: Mapped[str] = mapped_column(String(200), default="Not provided")
     risk_score: Mapped[float] = mapped_column(Float)
     risk_level: Mapped[str] = mapped_column(String(16), index=True)
     status: Mapped[str] = mapped_column(String(32), default="OPEN", index=True)
@@ -28,6 +36,7 @@ class RiskCase(Base):
     anomalies: Mapped[list[str]] = mapped_column(JSON, default=list)
     decision_critical_evidence: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     recommended_actions: Mapped[list[str]] = mapped_column(JSON, default=list)
+    workspace_data: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
         UTCDateTime(),

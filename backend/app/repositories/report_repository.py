@@ -22,6 +22,12 @@ class ReportRepository:
         )
         return self.session.scalar(statement)
 
+    def list_recent(self, *, limit: int = 50) -> list[ComplianceReport]:
+        statement = (
+            select(ComplianceReport).order_by(ComplianceReport.created_at.desc()).limit(limit)
+        )
+        return list(self.session.scalars(statement).all())
+
     def add(self, report: ComplianceReport) -> ComplianceReport:
         self.session.add(report)
         self.session.flush()

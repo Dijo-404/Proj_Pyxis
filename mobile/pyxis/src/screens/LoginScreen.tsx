@@ -17,8 +17,8 @@ import { colors, font, radius, spacing } from '../theme';
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('prie@gmail.com');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -26,12 +26,9 @@ export default function LoginScreen() {
   const onLogin = () => {
     setError(null);
     setLoading(true);
-    // brief delay to feel like a request
-    setTimeout(() => {
-      const res = signIn(email, password);
-      setLoading(false);
-      if (!res.ok) setError(res.error ?? 'Login failed');
-    }, 350);
+    const res = signIn(email, password);
+    setLoading(false);
+    if (!res.ok) setError(res.error ?? 'Login failed');
   };
 
   return (

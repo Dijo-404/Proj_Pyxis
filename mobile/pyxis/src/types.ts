@@ -1,4 +1,4 @@
-/** Domain types for the Pyxis prototype (mirrors the architecture data shapes). */
+/** Domain types for Pyxis, mirroring the persisted API data shapes. */
 
 export type ScenarioCategory = 'LEGITIMATE' | 'SUSPICIOUS' | 'UNCERTAIN';
 export type EvidenceStatus = 'MATCH' | 'CONTRADICT' | 'UNKNOWN' | 'PARTIAL';

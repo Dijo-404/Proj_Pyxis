@@ -139,8 +139,9 @@ python scripts/run_demo.py
 pytest backend/tests
 ```
 
-The demo imports [the synthetic mock risk case](../sandbox/mock_risk_case.json). A
-local Gemma runtime is needed only for Ask Gemma and report narrative generation.
+The demo imports a case from the shared deterministic
+[synthetic dataset](../data_pipeline/synthetic_data/dataset.py). A local Gemma runtime
+is needed only for Ask Gemma and report narrative generation.
 
 Authentication and role mapping are intentionally outside the supplied Member 2
 assignment. Until the authentication module is integrated, reviewer IDs in sandbox

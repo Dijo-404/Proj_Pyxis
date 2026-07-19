@@ -8,9 +8,9 @@ import {
   SectionTitle,
 } from '../components/ui';
 import Icon from '../components/Icon';
-import { CASES } from '../mockData';
-import { colors, font, radius, riskBand, spacing } from '../theme';
+import { font, radius, spacing } from '../theme';
 import { RiskCase } from '../types';
+import { useWorkspace } from '../workspace';
 
 function getRiskColor(risk: number): string {
   if (risk >= 80) return '#000000ff';
@@ -23,6 +23,8 @@ export default function CustomerRiskScreen({
 }: {
   onOpenCase: (id: string) => void;
 }) {
+  const { data } = useWorkspace();
+  const cases = data?.cases ?? [];
   return (
     <ImageBackground
       source={require('../../assets/risk.jpg')}
@@ -38,7 +40,7 @@ export default function CustomerRiskScreen({
             showsVerticalScrollIndicator={false}>
         <SectionTitle>Customer risk & safer workflow</SectionTitle>
 
-        {CASES.map(c => (
+        {cases.map(c => (
           <CustomerRiskCard key={c.id} data={c} onPress={() => onOpenCase(c.id)} />
         ))}
 
@@ -57,7 +59,6 @@ function CustomerRiskCard({
   data: RiskCase;
   onPress: () => void;
 }) {
-  const band = riskBand(data.currentRisk);
   const nextStep = data.saferWorkflow[0];
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={onPress}>

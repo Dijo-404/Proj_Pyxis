@@ -45,6 +45,14 @@ class CaseRepository:
         risk_case = RiskCase(
             case_id=payload.case_id,
             customer_id=payload.customer_id,
+            customer_name=payload.customer_name,
+            customer_type=payload.customer_type,
+            business=payload.business,
+            trigger_transaction_id=payload.trigger_transaction_id,
+            trigger_summary=payload.trigger_summary,
+            trigger_amount=payload.trigger_amount,
+            assigned_to=payload.assigned_to,
+            location=payload.location,
             risk_score=payload.risk_score,
             risk_level=payload.risk_level.value,
             priority=priority,
@@ -55,6 +63,7 @@ class CaseRepository:
                 else None
             ),
             recommended_actions=list(payload.recommended_actions),
+            workspace_data=dict(payload.workspace_data),
         )
         self.session.add(risk_case)
 

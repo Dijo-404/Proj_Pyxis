@@ -19,6 +19,9 @@ htmlcov/
 
 # Local data and model artifacts
 *.db
+*.db.*.bak
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
 models/*
@@ -27,15 +30,10 @@ models/*
 data/
 reports/
 
-# Flutter / Dart
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-mobile_app/build/
-mobile_app/.metadata
-mobile_app/android/.gradle/
-mobile_app/ios/Pods/
+# JavaScript tooling
+node_modules/
+test-results/
+playwright-report/
 
 # Editors and operating systems
 .idea/

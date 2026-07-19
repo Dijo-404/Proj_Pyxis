@@ -1,4 +1,4 @@
-/** Reusable UI primitives for the Pyxis prototype. */
+/** Reusable UI primitives for the Pyxis mobile application. */
 
 import React from 'react';
 import {

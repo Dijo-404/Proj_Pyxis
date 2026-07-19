@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, ProgressBar, RiskBadge } from '../components/ui';
-import { CASES } from '../mockData';
 import { colors, font, radius, riskBand, spacing } from '../theme';
 import { CaseStatus, RiskCase } from '../types';
 import ScreenHeader from '../components/ScreenHeader';
+import { useWorkspace } from '../workspace';
 
 type SortKey = 'urgency' | 'anomaly' | 'uncertainty';
 
@@ -25,8 +25,10 @@ export default function CaseQueueScreen({
   onOpenCase: (id: string) => void;
 }) {
   const [sort, setSort] = useState<SortKey>('urgency');
+  const { data } = useWorkspace();
+  const cases = data?.cases ?? [];
 
-  const sorted = [...CASES].sort((a, b) => {
+  const sorted = [...cases].sort((a, b) => {
     if (sort === 'anomaly') return b.anomalyScore - a.anomalyScore;
     if (sort === 'uncertainty') {
       const u = (c: RiskCase) =>
@@ -38,7 +40,7 @@ export default function CaseQueueScreen({
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
-      <ScreenHeader title="Risk Case Queue" subtitle={`${CASES.length} active cases`} onBack={onBack} />
+      <ScreenHeader title="Risk Case Queue" subtitle={`${cases.length} active cases`} onBack={onBack} />
       <View style={styles.sortRow}>
         {(['urgency', 'anomaly', 'uncertainty'] as SortKey[]).map(k => (
           <TouchableOpacity

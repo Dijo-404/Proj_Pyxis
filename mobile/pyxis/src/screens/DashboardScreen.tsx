@@ -10,8 +10,8 @@ import {
   StatTile,
 } from '../components/ui';
 import Icon from '../components/Icon';
-import { CASES, DASHBOARD, FLAGGED_TREND } from '../mockData';
 import { colors, font, radius, shadow, spacing } from '../theme';
+import { useWorkspace } from '../workspace';
 
 export default function DashboardScreen({
   onOpenCase: _onOpenCase,
@@ -21,10 +21,13 @@ export default function DashboardScreen({
   onOpenQueue: () => void;
 }) {
   const { user, signOut } = useAuth();
+  const { data } = useWorkspace();
+  if (!data) return null;
+  const { cases, dashboard, flaggedTrend } = data;
 
-  const critical = CASES.filter(c => c.currentRisk >= 80);
+  const critical = cases.filter(c => c.currentRisk >= 80);
   const portfolioRisk = Math.round(
-    CASES.reduce((s, c) => s + c.currentRisk, 0) / CASES.length,
+    cases.reduce((s, c) => s + c.currentRisk, 0) / Math.max(cases.length, 1),
   );
 
   return (
@@ -70,7 +73,7 @@ export default function DashboardScreen({
           />
           <View style={styles.heroFooter}>
             <Text style={styles.heroFootText}>
-              {critical.length} critical · {DASHBOARD.openCases} open cases
+              {critical.length} critical · {dashboard.openCases} open cases
             </Text>
             <View style={styles.heroTag}>
               <View style={styles.onlineDot} />
@@ -83,13 +86,13 @@ export default function DashboardScreen({
         <View style={styles.statGrid}>
           <StatTile
             icon="bar-chart"
-            value={DASHBOARD.transactionsAnalyzed.toLocaleString()}
+            value={dashboard.transactionsAnalyzed.toLocaleString()}
             label="Transactions analyzed"
             delta="+12%"
           />
           <StatTile
             icon="folder-open"
-            value={DASHBOARD.openCases}
+            value={dashboard.openCases}
             label="Open risk cases"
             accent={colors.accent}
             delta="+2"
@@ -98,13 +101,13 @@ export default function DashboardScreen({
         <View style={styles.statGrid}>
           <StatTile
             icon="exclamation-triangle"
-            value={DASHBOARD.criticalCases}
+            value={dashboard.criticalCases}
             label="Critical cases"
             accent={colors.critical}
           />
           <StatTile
             icon="clock-o"
-            value={DASHBOARD.pendingReviews}
+            value={dashboard.pendingReviews}
             label="Pending reviews"
             accent={colors.medium}
           />
@@ -116,18 +119,18 @@ export default function DashboardScreen({
             right={<Text style={styles.tagMuted}>This week</Text>}>
             Flagged transactions
           </SectionTitle>
-          <MiniBarChart data={FLAGGED_TREND} color={colors.accent} />
+          <MiniBarChart data={flaggedTrend} color={colors.accent} />
           <View style={styles.legendRow}>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: colors.low }]} />
               <Text style={styles.legendText}>
-                Cleared today: {DASHBOARD.clearedToday}
+                Cleared today: {dashboard.clearedToday}
               </Text>
             </View>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
               <Text style={styles.legendText}>
-                False-positive rate: {DASHBOARD.falsePositiveRate}%
+                False-positive rate: {dashboard.falsePositiveRate}%
               </Text>
             </View>
           </View>

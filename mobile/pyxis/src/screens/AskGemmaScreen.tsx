@@ -12,8 +12,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../components/ScreenHeader';
 import Icon from '../components/Icon';
-import { getCaseById } from '../mockData';
+import { askGemma } from '../api';
+import { useAuth } from '../auth';
 import { colors, font, radius, spacing } from '../theme';
+import { useWorkspace } from '../workspace';
 
 interface Msg {
   role: 'user' | 'gemma';
@@ -35,7 +37,9 @@ export default function AskGemmaScreen({
   caseId: string;
   onBack: () => void;
 }) {
-  const data = getCaseById(caseId);
+  const { data: workspace } = useWorkspace();
+  const { user } = useAuth();
+  const data = workspace?.cases.find(item => item.id === caseId);
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: 'gemma',
@@ -43,42 +47,32 @@ export default function AskGemmaScreen({
     },
   ]);
   const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
 
-  const answer = (q: string): string => {
-    if (!data) return 'This case is unavailable.';
-    const top = [...data.scenarios].sort((a, b) => b.matchScore - a.matchScore)[0];
-    const lower = q.toLowerCase();
-    if (lower.includes('high risk') || lower.includes('why'))
-      return `The current risk is ${data.currentRisk}/100 because the activity deviates from the trusted twin: ${data.twin
-        .filter(t => t.deviated)
-        .map(t => t.label.toLowerCase())
-        .join(', ')}. The leading scenario is "${top.name}" at ${top.matchScore}%.`;
-    if (lower.includes('layering') || lower.includes('suspicious')) {
-      const s = data.scenarios.find(x => x.category === 'SUSPICIOUS');
-      return s
-        ? `Evidence supporting ${s.name}: ${s.supporting.join('; ')}. Open question: ${s.unknown.join('; ') || 'none'}.`
-        : 'No suspicious scenario ranked meaningfully here.';
-    }
-    if (lower.includes('legitimate') || lower.includes('legit')) {
-      const s = data.scenarios.find(x => x.category === 'LEGITIMATE');
-      return s
-        ? `Evidence supporting ${s.name}: ${s.supporting.join('; ')}. What weakens it: ${s.contradicting.join('; ') || 'nothing notable'}.`
-        : 'No strong legitimate explanation is currently supported.';
-    }
-    if (lower.includes('change') || lower.includes('decision'))
-      return `The decision-critical question is: "${data.criticalQuestion.question}" — ${data.criticalQuestion.whyItMatters}`;
-    if (lower.includes('summar'))
-      return `Case ${data.id}: ${data.customerName} triggered a risk case (anomaly ${data.anomalyScore}, current risk ${data.currentRisk}). Leading scenario "${top.name}" (${top.matchScore}%). Recommended action: ${data.criticalQuestion.recommendedAction}`;
-    return `Based on the evidence package, the leading scenario is "${top.name}" (${top.matchScore}%). The most important unresolved question is: ${data.criticalQuestion.question}`;
-  };
-
-  const send = (text: string) => {
+  const send = async (text: string) => {
     const q = text.trim();
-    if (!q) return;
-    setMessages(m => [...m, { role: 'user', text: q }, { role: 'gemma', text: answer(q) }]);
+    if (!q || sending) return;
+    setMessages(m => [...m, { role: 'user', text: q }]);
     setInput('');
-    setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 60);
+    setSending(true);
+    try {
+      const response = await askGemma(caseId, user?.id ?? 'LOCAL-REVIEWER', q);
+      setMessages(m => [...m, { role: 'gemma', text: response }]);
+    } catch (requestError) {
+      setMessages(m => [
+        ...m,
+        {
+          role: 'gemma',
+          text: requestError instanceof Error
+            ? `Local model error: ${requestError.message}`
+            : 'The local model could not answer this question.',
+        },
+      ]);
+    } finally {
+      setSending(false);
+      requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+    }
   };
 
   return (
@@ -132,7 +126,10 @@ export default function AskGemmaScreen({
             onSubmitEditing={() => send(input)}
             returnKeyType="send"
           />
-          <TouchableOpacity style={styles.sendBtn} onPress={() => send(input)}>
+          <TouchableOpacity
+            style={[styles.sendBtn, sending && styles.sendBtnDisabled]}
+            disabled={sending}
+            onPress={() => send(input)}>
             <Icon name="paper-plane" size={16} color={colors.onPrimary} />
           </TouchableOpacity>
         </View>
@@ -196,4 +193,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  sendBtnDisabled: { opacity: 0.5 },
 });

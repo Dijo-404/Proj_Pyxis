@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../components/ScreenHeader';
 import Icon from '../components/Icon';
 import { Card, Pill, PrimaryButton, ProgressBar, RiskBadge, SectionTitle } from '../components/ui';
-import { getCaseById } from '../mockData';
 import { colors, font, radius, riskBand, shadow, spacing } from '../theme';
 import {
   CustomerTransaction,
@@ -14,6 +13,7 @@ import {
   Scenario,
   ScenarioCategory,
 } from '../types';
+import { useWorkspace } from '../workspace';
 
 type Tab = 'transactions' | 'twin' | 'investigation' | 'scenarios' | 'evidence' | 'decision';
 
@@ -43,7 +43,8 @@ export default function CaseDetailScreen({
   onAskGemma: (id: string) => void;
   onOpenSandbox: (id: string) => void;
 }) {
-  const data = getCaseById(caseId);
+  const { data: workspace } = useWorkspace();
+  const data = workspace?.cases.find(item => item.id === caseId);
   const [tab, setTab] = useState<Tab>('transactions');
 
   if (!data) {

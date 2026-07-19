@@ -1,6 +1,6 @@
 /**
  * Pyxis design tokens.
- * Teal primary / orange accent, matching the reference mockups.
+ * Teal primary / orange accent, matching the approved product reference.
  */
 
 export const colors = {
