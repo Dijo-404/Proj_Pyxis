@@ -65,11 +65,10 @@ export function Pill({
 /* ---------- Risk badge (derives band from score) ---------- */
 export function RiskBadge({ score }: { score: number }) {
   const band = riskBand(score);
-  const badgeColor = score >= 80 ? '#FF0000' : (score >= 50 ? '#FFA500' : '#00FF00');
   return (
-    <View style={[styles.riskBadge, { backgroundColor: 'rgba(0, 0, 0, 0.08)' }]}>
-      <View style={[styles.riskDot, { backgroundColor: badgeColor }]} />
-      <Text style={[styles.riskText, { color: badgeColor }]}>
+    <View style={[styles.riskBadge, { backgroundColor: band.soft }]}>
+      <View style={[styles.riskDot, { backgroundColor: band.color }]} />
+      <Text style={[styles.riskText, { color: band.color }]}>
         {band.label} · {score}
       </Text>
     </View>

@@ -8,14 +8,12 @@ import {
   SectionTitle,
 } from '../components/ui';
 import Icon from '../components/Icon';
-import { font, radius, spacing } from '../theme';
+import { font, radius, riskBand, spacing } from '../theme';
 import { RiskCase } from '../types';
 import { useWorkspace } from '../workspace';
 
 function getRiskColor(risk: number): string {
-  if (risk >= 80) return '#000000ff';
-  if (risk >= 50) return '#000000ff';
-  return '#000000ff';
+  return riskBand(risk).color;
 }
 
 export default function CustomerRiskScreen({

@@ -185,3 +185,32 @@ export async function askGemma(
   });
   return response.answer;
 }
+
+export type ReviewActionInput = 'CLEAR' | 'REQUEST_MORE_EVIDENCE' | 'ESCALATE' | 'MARK_SUSPICIOUS';
+
+export async function submitReview(
+  caseId: string,
+  reviewerId: string,
+  action: ReviewActionInput,
+  reason: string,
+): Promise<{ resultingStatus: string }> {
+  const response = await request<{ resulting_status: string }>(`/cases/${caseId}/review`, {
+    method: 'POST',
+    body: JSON.stringify({ reviewer_id: reviewerId, action, reason }),
+  });
+  return { resultingStatus: response.resulting_status };
+}
+
+export async function generateReport(
+  caseId: string,
+  reviewerId: string,
+): Promise<{ reportId: string; htmlPath: string }> {
+  const response = await request<{ report_id: string; html_path: string }>(
+    `/reports/${caseId}/generate`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ generated_by: reviewerId, include_pdf: false }),
+    },
+  );
+  return { reportId: response.report_id, htmlPath: response.html_path };
+}
