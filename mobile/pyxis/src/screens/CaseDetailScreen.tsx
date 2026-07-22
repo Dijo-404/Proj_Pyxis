@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../components/ScreenHeader';
 import Icon from '../components/Icon';
@@ -14,6 +14,8 @@ import {
   ScenarioCategory,
 } from '../types';
 import { useWorkspace } from '../workspace';
+import { useAuth } from '../auth';
+import { generateReport, submitReview } from '../api';
 
 type Tab = 'transactions' | 'twin' | 'investigation' | 'scenarios' | 'evidence' | 'decision';
 
@@ -425,7 +427,56 @@ function EvidenceTab({ data }: { data: RiskCase }) {
 
 /* ---------- Decision-Critical Evidence + Counterfactual + Review (§27 Screens 8/11) ---------- */
 function DecisionTab({ data }: { data: RiskCase }) {
+  const { user } = useAuth();
+  const { refresh } = useWorkspace();
   const [action, setAction] = useState<ReviewAction | null>(null);
+  const [reason, setReason] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [resultingStatus, setResultingStatus] = useState<string | null>(null);
+  const [reportState, setReportState] = useState<'idle' | 'generating' | 'error' | 'done'>('idle');
+  const [reportError, setReportError] = useState<string | null>(null);
+
+  const canSubmit =
+    !!action && action !== 'CLOSE' && reason.trim().length > 0 && !submitting;
+
+  const selectAction = (next: ReviewAction) => {
+    setAction(next);
+    setResultingStatus(null);
+    setSubmitError(null);
+  };
+
+  const onSubmitDecision = async () => {
+    if (!action || action === 'CLOSE' || !user) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const result = await submitReview(data.id, user.id, action, reason.trim());
+      setResultingStatus(result.resultingStatus);
+      await refresh();
+    } catch (requestError) {
+      setSubmitError(
+        requestError instanceof Error ? requestError.message : 'Unable to record this decision.',
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const onGenerateReport = async () => {
+    if (!user) return;
+    setReportState('generating');
+    setReportError(null);
+    try {
+      await generateReport(data.id, user.id);
+      setReportState('done');
+    } catch (requestError) {
+      setReportError(
+        requestError instanceof Error ? requestError.message : 'Unable to generate the report.',
+      );
+      setReportState('error');
+    }
+  };
 
   return (
     <View>
@@ -476,35 +527,63 @@ function DecisionTab({ data }: { data: RiskCase }) {
       {/* Reviewer decision (§27 Screen 11) */}
       <SectionTitle>Reviewer decision</SectionTitle>
       <View style={styles.decisionGrid}>
-        <DecisionButton label="Clear" color={colors.low} active={action === 'CLEAR'} onPress={() => setAction('CLEAR')} />
+        <DecisionButton label="Clear" color={colors.low} active={action === 'CLEAR'} onPress={() => selectAction('CLEAR')} />
         <DecisionButton
           label="Request Evidence"
           color={colors.medium}
           active={action === 'REQUEST_MORE_EVIDENCE'}
-          onPress={() => setAction('REQUEST_MORE_EVIDENCE')}
+          onPress={() => selectAction('REQUEST_MORE_EVIDENCE')}
         />
-        <DecisionButton label="Escalate" color={colors.accent} active={action === 'ESCALATE'} onPress={() => setAction('ESCALATE')} />
+        <DecisionButton label="Escalate" color={colors.accent} active={action === 'ESCALATE'} onPress={() => selectAction('ESCALATE')} />
         <DecisionButton
           label="Mark Suspicious"
           color={colors.critical}
           active={action === 'MARK_SUSPICIOUS'}
-          onPress={() => setAction('MARK_SUSPICIOUS')}
+          onPress={() => selectAction('MARK_SUSPICIOUS')}
         />
       </View>
 
       {action ? (
+        <TextInput
+          style={styles.reasonInput}
+          placeholder="Reason for this decision (required)"
+          placeholderTextColor={colors.textFaint}
+          value={reason}
+          onChangeText={setReason}
+          multiline
+        />
+      ) : null}
+
+      {resultingStatus ? (
         <View style={styles.decisionConfirm}>
           <Text style={styles.decisionConfirmText}>
-            Decision recorded: <Text style={{ fontWeight: '800' }}>{labelFor(action)}</Text>. An audit
-            log entry has been written for {data.id}.
+            Decision recorded: <Text style={{ fontWeight: '800' }}>{action ? labelFor(action) : ''}</Text>.
+            Case status is now {resultingStatus}. An audit log entry has been written for {data.id}.
           </Text>
         </View>
       ) : null}
+      {submitError ? <Text style={styles.decisionError}>{submitError}</Text> : null}
+
+      <PrimaryButton
+        title="Submit decision"
+        onPress={onSubmitDecision}
+        disabled={!canSubmit}
+        loading={submitting}
+        style={{ marginTop: spacing.lg }}
+      />
+
+      {reportState === 'done' ? (
+        <View style={styles.decisionConfirm}>
+          <Text style={styles.decisionConfirmText}>Compliance report generated for {data.id}.</Text>
+        </View>
+      ) : null}
+      {reportError ? <Text style={styles.decisionError}>{reportError}</Text> : null}
       <PrimaryButton
         title="Generate compliance report"
-        onPress={() => setAction(action ?? 'REQUEST_MORE_EVIDENCE')}
+        onPress={onGenerateReport}
+        loading={reportState === 'generating'}
         variant="outline"
-        style={{ marginTop: spacing.lg }}
+        style={{ marginTop: spacing.md }}
       />
     </View>
   );
@@ -751,6 +830,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   decisionBtnText: { fontSize: font.small, fontWeight: '800' },
+  reasonInput: {
+    marginTop: spacing.md,
+    minHeight: 60,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    fontSize: font.small,
+    color: colors.text,
+    backgroundColor: colors.surface,
+    textAlignVertical: 'top',
+  },
   decisionConfirm: {
     marginTop: spacing.lg,
     backgroundColor: colors.lowSoft,
@@ -758,4 +849,9 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   decisionConfirmText: { fontSize: font.small, color: colors.text, lineHeight: 20 },
+  decisionError: {
+    fontSize: font.small,
+    color: colors.critical,
+    marginTop: spacing.md,
+  },
 });
