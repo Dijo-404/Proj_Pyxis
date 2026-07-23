@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     # Cloud/external Gemma calls (e.g. Gemini API) must be explicitly opted into; the
     # local-only client already refuses non-private hosts regardless of this flag.
     allow_external_ai: bool = False
+    # Cloud Gemma provider for the Investigation Orchestrator / Scenario Generator roles.
+    # Only used when gemma_provider="gemini", allow_external_ai=True, and a key is set;
+    # otherwise the deterministic local fallback is used, matching allow_external_ai's default.
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemma-3-27b-it"
 
 
 @lru_cache

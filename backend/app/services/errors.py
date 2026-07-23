@@ -31,3 +31,8 @@ class ProcessingError(ApplicationError):
 class LocalAIUnavailableError(ApplicationError):
     def __init__(self, message: str) -> None:
         super().__init__(code="LOCAL_AI_UNAVAILABLE", message=message, status_code=503)
+
+
+class ExternalAIUnavailableError(ApplicationError):
+    def __init__(self, message: str) -> None:
+        super().__init__(code="EXTERNAL_AI_UNAVAILABLE", message=message, status_code=503)

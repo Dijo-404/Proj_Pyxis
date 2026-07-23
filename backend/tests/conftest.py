@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session, sessionmaker
 
-from backend.app.api.dependencies import get_case_assistant, get_report_writer
+from backend.app.api.dependencies import get_case_assistant, get_evidence_critic, get_report_writer
 from backend.app.core.config import Settings, get_settings
 from backend.app.core.database import create_sqlite_engine, get_db, load_member_two_models
 from backend.app.main import app
@@ -21,6 +21,17 @@ class FakeCaseAssistant:
         del risk_case, question
         return CaseAnswer(
             answer="The imported risk score and rapid redistribution require review.",
+            evidence_references=["CASE-001-EVD-001"],
+            missing_evidence=["Verified supplier relationships"],
+            disclaimer="This is decision support; a compliance officer makes the decision.",
+        )
+
+
+class FakeEvidenceCritic:
+    async def critique(self, risk_case: object) -> CaseAnswer:
+        del risk_case
+        return CaseAnswer(
+            answer="The leading scenario is contradicted by one unverified beneficiary.",
             evidence_references=["CASE-001-EVD-001"],
             missing_evidence=["Verified supplier relationships"],
             disclaimer="This is decision support; a compliance officer makes the decision.",
@@ -99,6 +110,7 @@ def client(tmp_path: Path) -> Generator[TestClient, None, None]:
     app.dependency_overrides[get_settings] = lambda: settings
     app.dependency_overrides[get_case_assistant] = lambda: FakeCaseAssistant()
     app.dependency_overrides[get_report_writer] = lambda: FakeReportWriter()
+    app.dependency_overrides[get_evidence_critic] = lambda: FakeEvidenceCritic()
     test_client = TestClient(app)
     try:
         yield test_client

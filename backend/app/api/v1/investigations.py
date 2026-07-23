@@ -2,8 +2,12 @@
 
 from fastapi import APIRouter, status
 
-from backend.app.api.dependencies import CaseAssistantDependency, SessionDependency
-from backend.app.schemas.assistant import CaseAnswer, CaseQuestion
+from backend.app.api.dependencies import (
+    CaseAssistantDependency,
+    EvidenceCriticDependency,
+    SessionDependency,
+)
+from backend.app.schemas.assistant import CaseAnswer, CaseCritiqueRequest, CaseQuestion
 from backend.app.schemas.audit import AuditEventRead
 from backend.app.schemas.common import Identifier
 from backend.app.schemas.evidence import EvidenceCreate, EvidenceRead, EvidenceVerification
@@ -11,6 +15,7 @@ from backend.app.schemas.review import ReviewCreate, ReviewRead
 from backend.app.services.assistant_service import AssistantService
 from backend.app.services.audit_service import AuditService
 from backend.app.services.case_service import CaseService
+from backend.app.services.evidence_critic_service import EvidenceCriticService
 from backend.app.services.evidence_service import EvidenceService
 from backend.app.services.review_service import ReviewService
 
@@ -75,3 +80,16 @@ async def ask_gemma(
     assistant: CaseAssistantDependency,
 ) -> CaseAnswer:
     return await AssistantService(session, assistant).ask(case_id, payload)
+
+
+@router.post("/cases/{case_id}/critique-evidence", response_model=CaseAnswer)
+async def critique_evidence(
+    case_id: Identifier,
+    payload: CaseCritiqueRequest,
+    session: SessionDependency,
+    critic: EvidenceCriticDependency,
+) -> CaseAnswer:
+    """Runs the Evidence Critic role: challenges the leading scenario and identifies
+    contradictory, unverified, and missing evidence for a human reviewer.
+    """
+    return await EvidenceCriticService(session, critic).critique(case_id, payload.reviewer_id)

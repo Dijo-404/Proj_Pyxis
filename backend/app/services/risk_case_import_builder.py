@@ -172,7 +172,9 @@ def _build_twin_metrics(transaction, twin, anomaly) -> list[dict[str, object]]:
     ]
 
 
-def _build_investigation_steps(anomaly, investigation, comparisons, critical) -> list[dict[str, object]]:
+def _build_investigation_steps(
+    anomaly, investigation, comparisons, critical
+) -> list[dict[str, object]]:
     top = max(comparisons, key=lambda c: c.match_score, default=None)
     top_scenario = next(
         (s for s in investigation.scenarios if top and s.scenario_id == top.scenario_id), None

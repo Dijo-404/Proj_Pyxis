@@ -12,6 +12,12 @@ class CaseQuestion(BaseModel):
     question: LongText
 
 
+class CaseCritiqueRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    reviewer_id: Identifier
+
+
 class CaseAnswer(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

@@ -333,7 +333,11 @@ def _build_transaction_history(
                 "risky": is_trigger and anomaly.score >= 30,
                 "riskScore": anomaly.score if is_trigger else 0,
                 "reason": (
-                    (anomaly.triggered_rules[0].description if anomaly.triggered_rules else "Flagged for review")
+                    (
+                        anomaly.triggered_rules[0].description
+                        if anomaly.triggered_rules
+                        else "Flagged for review"
+                    )
                     if is_trigger and anomaly.score >= 30
                     else "No anomaly evaluated this run"
                 ),

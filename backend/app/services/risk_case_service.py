@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 
+from backend.app.intelligence.gemma.provider import GemmaProvider
 from backend.app.repositories.customer_repository import CustomerRepository
 from backend.app.repositories.risk_engine_case_repository import RiskEngineCaseRepository
 from backend.app.repositories.transaction_repository import TransactionRepository
@@ -22,6 +23,7 @@ class RiskCaseService:
         transactions: TransactionRepository,
         twins: TwinRepository,
         cases: RiskEngineCaseRepository,
+        investigation_provider: GemmaProvider | None = None,
     ) -> None:
         self.customers = customers
         self.transactions = transactions
@@ -30,7 +32,7 @@ class RiskCaseService:
         self.profile_service = CustomerProfileService(transactions)
         self.twin_service = FinancialTwinService(twins)
         self.anomaly_service = AnomalyService()
-        self.investigation_service = InvestigationService()
+        self.investigation_service = InvestigationService(investigation_provider)
         self.scenario_service = ScenarioService()
 
     def evaluate_transaction(self, request: TransactionEvaluateRequest) -> RiskCaseResponse:

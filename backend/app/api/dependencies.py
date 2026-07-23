@@ -10,6 +10,7 @@ from backend.app.core.database import get_db
 from backend.app.services.errors import LocalAIUnavailableError
 from local_ai.gemma.case_assistant import CaseAssistant
 from local_ai.gemma.client import LocalGemmaClient
+from local_ai.gemma.evidence_critic import EvidenceCritic
 from local_ai.gemma.report_writer import ReportWriter
 
 SettingsDependency = Annotated[Settings, Depends(get_settings)]
@@ -38,5 +39,10 @@ def get_report_writer(client: LocalGemmaDependency) -> ReportWriter:
     return ReportWriter(client)
 
 
+def get_evidence_critic(client: LocalGemmaDependency) -> EvidenceCritic:
+    return EvidenceCritic(CaseAssistant(client))
+
+
 CaseAssistantDependency = Annotated[CaseAssistant, Depends(get_case_assistant)]
 ReportWriterDependency = Annotated[ReportWriter, Depends(get_report_writer)]
+EvidenceCriticDependency = Annotated[EvidenceCritic, Depends(get_evidence_critic)]

@@ -27,6 +27,22 @@ def test_asks_case_scoped_assistant_and_audits_query(
     assert len(query_event["metadata"]["question_sha256"]) == 64
 
 
+def test_critiques_evidence_and_audits_query(
+    client: TestClient, risk_case_payload: dict[str, object]
+) -> None:
+    client.post("/api/v1/cases/import", json=risk_case_payload)
+    response = client.post(
+        "/api/v1/cases/CASE-001/critique-evidence",
+        json={"reviewer_id": "OFFICER-12"},
+    )
+    assert response.status_code == 200
+    assert response.json()["evidence_references"] == ["CASE-001-EVD-001"]
+
+    audit = client.get("/api/v1/cases/CASE-001/audit").json()
+    critique_event = next(event for event in audit if event["action"] == "EVIDENCE_CRITIQUED")
+    assert critique_event["metadata"]["evidence_references"] == ["CASE-001-EVD-001"]
+
+
 def test_generates_escaped_html_report_and_retrieves_latest(
     client: TestClient, risk_case_payload: dict[str, object]
 ) -> None:
