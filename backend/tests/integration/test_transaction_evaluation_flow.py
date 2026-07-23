@@ -1,15 +1,10 @@
-import pytest
 from fastapi.testclient import TestClient
 
-from backend.app.main import app
 
-
-@pytest.mark.parametrize(
-    "endpoint",
-    ["/api/v1/transactions/evaluate", "/api/v1/risk-engine/transactions/evaluate"],
-)
-def test_transaction_evaluation_creates_risk_case_json(endpoint: str):
-    client = TestClient(app)
+def test_transaction_evaluation_persists_reviewable_case_json(client: TestClient):
+    """Evaluating a transaction runs the real twin/anomaly/scenario/evidence pipeline and
+    persists a reviewable, reportable DB-backed case — not a disconnected in-memory one.
+    """
     payload = {
         "transaction": {
             "transaction_id": "TXN-100234",
@@ -38,12 +33,24 @@ def test_transaction_evaluation_creates_risk_case_json(endpoint: str):
         },
     }
 
-    response = client.post(endpoint, json=payload)
+    response = client.post("/api/v1/transactions/evaluate", json=payload)
 
     assert response.status_code == 201
     body = response.json()["data"]
     assert body["case_id"].startswith("CASE-")
     assert body["risk_level"] == "HIGH"
     assert body["scenarios"]
-    assert body["evidence_comparisons"]
     assert body["decision_critical_evidence"]["question"]
+
+    workspace_data = body["workspace_data"]
+    assert workspace_data["scenario_evidence"]
+    assert workspace_data["evidence_matrix"]
+    assert workspace_data["financial_twin"]
+    assert workspace_data["sandbox"]["stages"]
+    assert workspace_data["sandbox"]["transactions"]
+
+    # The persisted case is now retrievable and reviewable through the normal case API,
+    # proving the two pipelines are actually unified rather than merely both present.
+    get_response = client.get(f"/api/v1/cases/{body['case_id']}")
+    assert get_response.status_code == 200
+    assert get_response.json()["case_id"] == body["case_id"]

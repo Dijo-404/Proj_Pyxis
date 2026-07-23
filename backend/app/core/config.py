@@ -2,7 +2,6 @@
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -40,7 +39,9 @@ class Settings(BaseSettings):
     document_storage_path: Path = Path("./data/documents")
     report_output_path: Path = Path("./reports")
     max_document_bytes: int = 20 * 1024 * 1024
-    allow_external_ai: Literal[False] = False
+    # Cloud/external Gemma calls (e.g. Gemini API) must be explicitly opted into; the
+    # local-only client already refuses non-private hosts regardless of this flag.
+    allow_external_ai: bool = False
 
 
 @lru_cache
