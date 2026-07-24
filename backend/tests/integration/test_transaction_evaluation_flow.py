@@ -48,6 +48,10 @@ def test_transaction_evaluation_persists_reviewable_case_json(client: TestClient
     assert workspace_data["financial_twin"]
     assert workspace_data["sandbox"]["stages"]
     assert workspace_data["sandbox"]["transactions"]
+    # The stub investigation's scenarios always carry an UNKNOWN invoice/documentation
+    # signal, so the counterfactual engine should produce at least one real step.
+    assert workspace_data["counterfactual"]
+    assert set(workspace_data["counterfactual"][0]) == {"condition", "from", "to"}
 
     # The persisted case is now retrievable and reviewable through the normal case API,
     # proving the two pipelines are actually unified rather than merely both present.

@@ -5,6 +5,7 @@ report for — instead of the two staying disconnected.
 """
 
 from backend.app.intelligence.sandbox.trace_builder import build_sandbox_trace
+from backend.app.intelligence.scenario_engine.counterfactual_engine import compute_counterfactual
 from backend.app.schemas.case import DecisionCriticalEvidence as ImportCriticalEvidence
 from backend.app.schemas.case import RiskCaseImport
 from backend.app.schemas.common import RiskLevel, ScenarioCategory
@@ -73,6 +74,12 @@ def build_risk_case_import(
         for comparison in comparisons
     }
     evidence_matrix = _build_evidence_matrix(comparisons)
+    counterfactual = compute_counterfactual(
+        comparisons=comparisons,
+        scenarios=investigation.scenarios,
+        anomaly_score=anomaly.score,
+        current_risk_score=risk_case.current_risk_score,
+    )
     sandbox = build_sandbox_trace(
         case_id=risk_case.case_id,
         customer=customer,
@@ -118,8 +125,7 @@ def build_risk_case_import(
             "investigation": investigation_steps,
             "scenario_evidence": scenario_evidence,
             "evidence_matrix": evidence_matrix,
-            # Populated by the counterfactual-analysis engine (spec §19).
-            "counterfactual": [],
+            "counterfactual": [step.model_dump(by_alias=True) for step in counterfactual],
             "sandbox": sandbox,
         },
     )

@@ -72,3 +72,15 @@ class DecisionCriticalEvidence(BaseModel):
     question: str
     why_it_matters: str
     recommended_action: str
+
+
+class CounterfactualStep(BaseModel):
+    """One step of "if this evidence were verified, risk would change from X to Y"
+    (spec §19). A scenario-based estimate, not a guaranteed prediction.
+    """
+
+    condition: str
+    from_score: int = Field(ge=0, le=100, serialization_alias="from")
+    to_score: int = Field(ge=0, le=100, serialization_alias="to")
+
+    model_config = ConfigDict(populate_by_name=True)
