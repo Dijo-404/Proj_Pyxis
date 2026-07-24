@@ -17,6 +17,15 @@ class CaseRepository:
     def get(self, case_id: str) -> RiskCase | None:
         return self.session.get(RiskCase, case_id)
 
+    def get_by_trigger_transaction(self, transaction_id: str) -> RiskCase | None:
+        """Find the case (if any) that a given transaction originally triggered, so
+        callers can check its review outcome (e.g. trust-gated twin learning).
+        """
+        statement: Select[tuple[RiskCase]] = select(RiskCase).where(
+            RiskCase.trigger_transaction_id == transaction_id
+        )
+        return self.session.scalars(statement).first()
+
     def list(
         self,
         *,

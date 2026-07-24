@@ -1,6 +1,9 @@
 from datetime import UTC, datetime
 
+from sqlalchemy.orm import Session
+
 from backend.app.intelligence.gemma.provider import GemmaProvider
+from backend.app.repositories.case_repository import CaseRepository
 from backend.app.repositories.customer_repository import CustomerRepository
 from backend.app.repositories.risk_engine_case_repository import RiskEngineCaseRepository
 from backend.app.repositories.transaction_repository import TransactionRepository
@@ -81,9 +84,17 @@ class RiskCaseService:
     def get_twin(self, customer_id: str) -> FinancialTwin | None:
         return self.twins.get(customer_id)
 
-    def rebuild_twin(self, customer: CustomerProfile) -> FinancialTwin:
+    def rebuild_twin(
+        self, customer: CustomerProfile, session: Session | None = None
+    ) -> FinancialTwin:
+        """Recompute the customer's baseline. When `session` is supplied, rebuilding is
+        trust-gated (spec §10): transactions belonging to an unresolved or confirmed-
+        suspicious case are excluded, so a still-open or suspicious pattern cannot get
+        baked into "normal" just by asking for a rebuild.
+        """
         self.customers.save(customer)
-        behavior = self.profile_service.build_profile(customer.customer_id)
+        case_repository = CaseRepository(session) if session is not None else None
+        behavior = self.profile_service.build_profile(customer.customer_id, case_repository)
         return self.twin_service.rebuild(customer, behavior)
 
     def investigate_case(self, case_id: str) -> RiskCaseResponse | None:

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from backend.app.api.dependencies import SessionDependency
 from backend.app.core.errors import not_found
 from backend.app.db.session import risk_case_service
 from backend.app.schemas.common import ApiResponse
@@ -19,8 +20,8 @@ def get_financial_twin(customer_id: str) -> ApiResponse[FinancialTwin]:
 
 @router.post("/{customer_id}/financial-twin/rebuild", response_model=ApiResponse[FinancialTwin])
 def rebuild_financial_twin(
-    customer_id: str, customer: CustomerProfile
+    customer_id: str, customer: CustomerProfile, session: SessionDependency
 ) -> ApiResponse[FinancialTwin]:
     if customer.customer_id != customer_id:
         raise ValueError("Path customer_id must match body customer_id")
-    return ApiResponse(data=risk_case_service.rebuild_twin(customer))
+    return ApiResponse(data=risk_case_service.rebuild_twin(customer, session))
